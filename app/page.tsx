@@ -5,6 +5,7 @@ export default function Home() {
         <h1 className="text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50 mb-8">
           ようこそ！
         </h1>
+        <p>このシステムを太平洋を漂う偶然の遭遇と離別と再会に渦巻く古の縁あるものに捧ぐ</p>
         <form className="flex flex-col gap-4 w-full max-w-md">
           <input
             type="email"
