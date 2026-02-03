@@ -1,4 +1,14 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+
 export default function Home() {
+  const [host, setHost] = useState('');
+
+  useEffect(() => {
+    setHost(window.location.host);
+  }, []);
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex flex-col items-center justify-center py-32 px-16 bg-white dark:bg-black">
@@ -22,6 +32,7 @@ export default function Home() {
             認証
           </button>
         </form>
+        <p>@{host}</p>
       </main>
     </div>
   );
