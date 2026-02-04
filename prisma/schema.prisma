@@ -1,0 +1,110 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum AuthType {
+  EMAIL
+  GOOGLE
+  GITHUB
+}
+
+model Email {
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  authType     AuthType
+  userId       Int
+  priority     Int?
+  activatedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  
+  @@map("emails")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  uid       String   @unique
+  passwd    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("users")
+}
+
+model Group {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("groups")
+}
+
+model GroupUser {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  groupId   Int
+  role      Int
+  joinedAt  DateTime @default(now())
+  
+  @@map("group_users")
+}
+
+model Place {
+  id        Int     @id @default(autoincrement())
+  name      String
+  latitude  Float?
+  longitude Float?
+  
+  @@map("places")
+}
+
+model ActivityTemplate {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String?
+  whenType    Int
+  when        String
+  placeId     Int?
+  
+  @@map("activity_templates")
+}
+
+model Activity {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  startedAt   DateTime
+  finishedAt  DateTime?
+  placeId     Int?
+  
+  @@map("activities")
+}
+
+model ActivityGroup {
+  id         Int @id @default(autoincrement())
+  activityId Int
+  groupId    Int
+  
+  @@map("activity_groups")
+}
+
+model ActivityUser {
+  id         Int @id @default(autoincrement())
+  activityId Int
+  userId     Int
+  status     Int
+  
+  @@map("activity_users")
+}
