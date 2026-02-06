@@ -1,0 +1,31 @@
+新規ユーザーとして登録しました: wzlzr@hotmail.com
+Error: Error: NEXT_REDIRECT
+    at getRedirectError (../../../src/client/components/redirect.ts:15:16)
+    at getRedirectError (../../../src/client/components/redirect.ts:40:8)
+    at handleSubmit (app/page.tsx:35:15)
+  13 |   statusCode: RedirectStatusCode = RedirectStatusCode.TemporaryRedirect
+  14 | ): RedirectError {
+> 15 |   const error = new Error(REDIRECT_ERROR_CODE) as RedirectError
+     |                ^
+  16 |   error.digest = `${REDIRECT_ERROR_CODE};${type};${url};${statusCode};`
+  17 |   return error
+  18 | } {
+  digest: 'NEXT_REDIRECT;push;/home?email=wzlzr%40hotmail.com;307;'
+}
+ POST / 200 in 2118ms
+既存のユーザーです: wzlzr@hotmail.com
+Error: Error: NEXT_REDIRECT
+    at getRedirectError (../../../src/client/components/redirect.ts:15:16)
+    at getRedirectError (../../../src/client/components/redirect.ts:40:8)
+    at handleSubmit (app/page.tsx:35:15)
+  13 |   statusCode: RedirectStatusCode = RedirectStatusCode.TemporaryRedirect
+  14 | ): RedirectError {
+> 15 |   const error = new Error(REDIRECT_ERROR_CODE) as RedirectError
+     |                ^
+  16 |   error.digest = `${REDIRECT_ERROR_CODE};${type};${url};${statusCode};`
+  17 |   return error
+  18 | } {
+  digest: 'NEXT_REDIRECT;push;/home?email=wzlzr%40hotmail.com;307;'
+}
+ POST / 200 in 376ms
+  

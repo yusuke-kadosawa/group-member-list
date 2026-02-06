@@ -41,7 +41,7 @@ export default function SignIn({ searchParams }: { searchParams: { from?: string
           <form
             action={async () => {
               "use server"
-              await signIn("google", { redirectTo: searchParams.from || "/dashboard" })
+              await signIn("google", { redirectTo: searchParams.from || "/home" })
             }}
           >
             <button

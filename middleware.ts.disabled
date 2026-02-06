@@ -6,7 +6,7 @@ export default auth((req) => {
 
   if (isAuthPage) {
     if (isAuth) {
-      return Response.redirect(new URL("/dashboard", req.url))
+      return Response.redirect(new URL("/home", req.url))
     }
     return null
   }

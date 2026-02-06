@@ -1,20 +1,50 @@
 import { auth, signOut } from "@/app/auth"
 import { redirect } from "next/navigation"
+import { cookies } from "next/headers"
+import { prisma } from "@/lib/prisma"
 
-export default async function Dashboard() {
-  const session = await auth()
+export default async function Home() {
+  const renderStart = Date.now()
+  let session: any = undefined
+  if (typeof auth === 'function') {
+    session = await auth()
+  }
+
+  // フォールバック: auth() がセッションを返さない場合、cookie を直接参照して DB の sessions を確認
+  if (!session) {
+    try {
+      const cookieStore = await cookies();
+      const token = cookieStore.get("next-auth.session-token")?.value;
+      if (token) {
+        const dbSession = await prisma.session.findUnique({
+          where: { sessionToken: token },
+          include: { user: true },
+        });
+        if (dbSession && dbSession.expires > new Date()) {
+          // 簡易的な session 形に合わせる
+          session = { user: { id: dbSession.user.id, name: dbSession.user.name, email: dbSession.user.email } } as any;
+        }
+      }
+    } catch (e) {
+      console.error('session fallback error', e)
+    }
+  }
 
   if (!session) {
+    console.log(`[home] no session - redirect to /auth/signin`)
     redirect("/auth/signin")
   }
+
+  const renderDur = Date.now() - renderStart
+  console.log(`[home] render for ${session.user?.email || 'unknown'} completed in ${renderDur}ms`)
 
   return (
     <div className="min-h-screen bg-zinc-50 font-sans dark:bg-black">
       <header className="bg-white dark:bg-gray-900 shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
-              ダッシュボード
+              <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
+              ホーム
             </h1>
             <div className="flex items-center gap-4">
               <span className="text-gray-700 dark:text-gray-300">

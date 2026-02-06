@@ -1,44 +1,27 @@
 import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
+import LoginForm from '@/app/components/LoginForm';
 
-export default function Home() {
-  async function handleSubmit(formData: FormData) {
-    'use server';
-    
-    const email = formData.get('email') as string;
-    
-    if (!email) {
-      return { error: 'メールアドレスを入力してください。' };
-    }
-
-    try {
-      // メールアドレスが存在するかチェック
-      const existingUser = await prisma.user.findFirst({
-        where: { email }
-      });
-
-      if (!existingUser) {
-        // ユーザーが存在しない場合、新規作成
-        await prisma.user.create({
-          data: {
-            uid: email, // uidとしてemailを使用
-            email,
-            name: email.split('@')[0], // 簡易的な名前生成
-          }
-        });
-        console.log('新規ユーザーとして登録しました:', email);
-      } else {
-        console.log('既存のユーザーです:', email);
+export default async function Home() {
+  // サーバー側で cookie を確認し、DB の sessions を検証してから表示またはリダイレクトする
+  try {
+    // Next.js の警告に従い cookies() は await してから使用する
+    const cookieStore = await cookies();
+    const token = cookieStore.get('next-auth.session-token')?.value;
+    if (token) {
+      const dbSession = await prisma.session.findUnique({ where: { sessionToken: token }, include: { user: true } });
+      if (dbSession && dbSession.expires > new Date()) {
+        // 有効なセッションがあればサーバー側で直接 /home にリダイレクト
+        redirect('/home');
       }
-
-      // ダッシュボードにリダイレクト
-      redirect('/dashboard?email=' + encodeURIComponent(email));
-      
-    } catch (error) {
-      console.error('Error:', error);
-      return { error: 'エラーが発生しました。' };
     }
+  } catch (e: any) {
+    // redirect は内部的に NEXT_REDIRECT エラーを投げるため、それは再スローして Next に処理させる
+    if (e && (e.message === 'NEXT_REDIRECT' || (typeof e.digest === 'string' && e.digest.startsWith('NEXT_REDIRECT')))) throw e;
+    console.error('root page session check error', e);
   }
+  // Login is handled by client-side LoginForm -> POST /api/login
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
@@ -47,21 +30,7 @@ export default function Home() {
           ようこそ！
         </h1>
         <p>このシステムを太平洋を漂う偶然の遭遇と離別と再会に渦巻く古の縁あるものに捧ぐ</p>
-        <form action={handleSubmit} className="flex flex-col gap-4 w-full max-w-md">
-          <input
-            name="email"
-            type="email"
-            placeholder="メールアドレスを入力"
-            className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-            required
-          />
-          <button
-            type="submit"
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-          >
-            認証
-          </button>
-        </form>
+        <LoginForm />
         <p>@{typeof window !== 'undefined' ? window.location.host : 'localhost:3000'}</p>
       </main>
     </div>

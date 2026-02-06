@@ -1,0 +1,71 @@
+title: "Middleware エラー対応手順"
+description: "NextAuth middleware で発生する 'Cannot read properties of undefined (reading 'custom')' エラーの解決手順"
+error_type: "TypeError: Cannot read properties of undefined (reading 'custom')"
+related_library: "openid-client"
+root_cause: "NextAuth の PrismaAdapter 設定不足と環境変数未設定"
+
+steps:
+  - step: 1
+    title: "auth.ts に PrismaAdapter を追加"
+    description: "NextAuth 設定に PrismaAdapter をインポートして追加"
+    code:
+      - "import { PrismaAdapter } from \"@next-auth/prisma-adapter\""
+      - "import { prisma } from \"@/lib/prisma\""
+      - "adapter: PrismaAdapter(prisma),"
+    files:
+      - "app/auth.ts"
+
+  - step: 2
+    title: "Session strategy を database に変更"
+    description: "PrismaAdapter 使用時は session strategy を 'database' に設定"
+    code:
+      - "session: {"
+      - "  strategy: \"database\","
+      - "  maxAge: 30 * 24 * 60 * 60,"
+      - "},"
+    files:
+      - "app/auth.ts"
+
+  - step: 3
+    title: "環境変数を設定"
+    description: "NextAuth 必須の環境変数を .env.local に追加"
+    code:
+      - "NEXTAUTH_URL=\"http://localhost:3000\""
+      - "NEXTAUTH_SECRET=\"your-secret-key-change-this-in-production\""
+      - "DATABASE_URL=\"postgresql://user:password@localhost:5432/database\""
+    files:
+      - ".env.local"
+
+  - step: 4
+    title: "Next.js キャッシュをクリア"
+    description: "ビルドキャッシュを削除して再ビルド"
+    commands:
+      - "rm -rf .next"
+    directory: "group-member-list"
+
+  - step: 5
+    title: "開発サーバーを再起動"
+    description: "変更を反映するために開発サーバーを再起動"
+    commands:
+      - "npm run dev"
+    directory: "group-member-list"
+
+  - step: 6
+    title: "動作確認"
+    description: "ブラウザで localhost:3000 にアクセスしてエラーが解決されたか確認"
+    checks:
+      - "middleware が正常にコンパイルされる"
+      - "ページが表示される"
+      - "認証フローが動作する"
+
+troubleshooting:
+  - issue: "まだエラーが発生する場合"
+    solutions:
+      - "node_modules を削除して再インストール: rm -rf node_modules && npm install"
+      - "NextAuth バージョンを確認: package.json で next-auth が 4.x であることを確認"
+      - "Prisma スキーマを確認: prisma/schema.prisma に NextAuth モデルがあるか確認"
+
+notes:
+  - "このエラーは NextAuth v4 と PrismaAdapter の組み合わせでよく発生します"
+  - "session strategy を 'database' にするとセッション情報がデータベースに保存されます"
+  - "NEXTAUTH_SECRET は本番環境では強力なランダム文字列に変更してください"
