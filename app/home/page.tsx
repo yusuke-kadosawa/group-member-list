@@ -3,6 +3,7 @@ import LogoutButton from "@/app/components/LogoutButton"
 import { redirect } from "next/navigation"
 import { cookies } from "next/headers"
 import { prisma } from "@/lib/prisma"
+import Link from "next/link"
 
 export default async function Home() {
   const renderStart = Date.now()
@@ -73,14 +74,14 @@ export default async function Home() {
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-                <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+                <Link href="/groups" className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                     グループ管理
                   </h3>
                   <p className="text-gray-600 dark:text-gray-400">
                     グループの作成とメンバー管理
                   </p>
-                </div>
+                </Link>
 
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
