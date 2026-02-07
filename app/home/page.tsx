@@ -1,4 +1,5 @@
-import { auth, signOut } from "@/app/auth"
+import { auth } from "@/app/auth"
+import LogoutButton from "@/app/components/LogoutButton"
 import { redirect } from "next/navigation"
 import { cookies } from "next/headers"
 import { prisma } from "@/lib/prisma"
@@ -50,17 +51,10 @@ export default async function Home() {
               <span className="text-gray-700 dark:text-gray-300">
                 {session.user?.email}
               </span>
-              <form action={async () => {
-                "use server"
-                await signOut({ redirectTo: "/" })
-              }}>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
-                >
-                  ログアウト
-                </button>
-              </form>
+              {/* Server Action signOut failed in runtime; use client-side logout */}
+              {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+              {/* LogoutButton handles POST /api/auth/signout and redirects */}
+              <LogoutButton />
             </div>
           </div>
         </div>
