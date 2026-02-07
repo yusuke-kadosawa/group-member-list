@@ -48,11 +48,15 @@ model User {
 }
 
 model Group {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            Int      @id @default(autoincrement())
+  parentGroupId Int?     @map("parent_group_id")
+  name          String
+  description   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  parent   Group?  @relation("GroupHierarchy", fields: [parentGroupId], references: [id])
+  children Group[] @relation("GroupHierarchy")
   
   @@map("groups")
 }
