@@ -94,10 +94,15 @@ export default function GroupList({ groups, initialViewMode }: GroupListProps) {
                   {group.description}
                 </p>
               )}
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500 dark:text-gray-500">
-                  作成日: {new Date(group.createdAt).toLocaleDateString('ja-JP')}
-                </span>
+              <div className="mb-3 space-y-1">
+                <div className="text-sm text-gray-500 dark:text-gray-500">
+                  作成日時: {new Date(group.createdAt).toLocaleString('ja-JP')}
+                </div>
+                <div className="text-sm text-gray-500 dark:text-gray-500">
+                  更新日時: {new Date(group.updatedAt).toLocaleString('ja-JP')}
+                </div>
+              </div>
+              <div className="flex items-center justify-end">
                 <div className="flex gap-2">
                   <Link
                     href={`/groups/${group.id}/edit`}
@@ -133,7 +138,10 @@ export default function GroupList({ groups, initialViewMode }: GroupListProps) {
                   説明
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  作成日
+                  作成日時
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  更新日時
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   操作
@@ -162,7 +170,10 @@ export default function GroupList({ groups, initialViewMode }: GroupListProps) {
                     </p>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-500">
-                    {new Date(group.createdAt).toLocaleDateString('ja-JP')}
+                    {new Date(group.createdAt).toLocaleString('ja-JP')}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-500">
+                    {new Date(group.updatedAt).toLocaleString('ja-JP')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                     <Link
