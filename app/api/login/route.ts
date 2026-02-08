@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { randomUUID } from 'crypto'
+import { sendVerificationEmail } from '@/lib/email'
 
 export async function POST(req: Request) {
   try {
@@ -14,13 +15,14 @@ export async function POST(req: Request) {
     }
 
     const token = randomUUID()
-    const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-    await prisma.session.create({ data: { sessionToken: token, userId: user.id, expires } })
+    const expires = new Date(Date.now() + 1 * 60 * 60 * 1000) // 1 hour
+    await prisma.verificationToken.create({ data: { identifier: email, token, expires } })
 
-    const res = NextResponse.json({ ok: true })
-    // Set cookie (HttpOnly)
-    res.cookies.set('next-auth.session-token', token, { httpOnly: true, path: '/', expires })
-    return res
+    // TODO: Send email with verification URL
+    const verificationUrl = `${process.env.NEXTAUTH_URL}/auth/verify?token=${token}`
+    await sendVerificationEmail(email, verificationUrl)
+
+    return NextResponse.json({ ok: true })
   } catch (e) {
     console.error('api/login error', e)
     return NextResponse.json({ error: 'server error' }, { status: 500 })

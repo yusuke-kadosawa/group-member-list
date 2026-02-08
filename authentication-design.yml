@@ -1,0 +1,278 @@
+authentication_design:
+  title: "Group Member List 認証システム設計"
+  version: "1.0.0"
+  description: "グループメンバーリストアプリケーション向けのメールベース認証システム"
+  status: "実装中"
+
+  components:
+    - frontend: "Next.js App Router"
+      status: "実装済み"
+    - backend: "Next.js API Routes"
+      status: "実装済み"
+    - database: "PostgreSQL with Prisma"
+      status: "実装済み"
+    - session: "HttpOnlyクッキーによるカスタムセッション"
+      status: "実装済み"
+
+  authentication_flow:
+    status: "実装済み"
+    description: "メール認証の基本フロー"
+    steps:
+      1:
+        action: "ユーザーがログインフォームでメールアドレスを入力"
+        endpoint: "POST /api/login"
+        description: "検証リンク付きメールを送信"
+        status: "実装済み"
+      2:
+        action: "ユーザーがメール内の検証リンクをクリック"
+        url: "/auth/verify?token={token}"
+        description: "検証ページにアクセス"
+        status: "実装済み"
+      3:
+        action: "システムがトークンを検証しセッションを作成"
+        description: "HttpOnlyクッキーを設定し/homeにリダイレクト"
+        status: "実装済み"
+
+  api_endpoints:
+    status: "実装済み"
+    login:
+      path: "/api/login"
+      method: "POST"
+      request_body:
+        email: "string (必須)"
+      response:
+        success: "{ ok: true }"
+        error: "{ error: string }"
+      description: "検証トークンを生成しメールを送信"
+      status: "実装済み"
+
+    verify:
+      path: "/auth/verify"
+      method: "GET"
+      query_params:
+        token: "string (必須)"
+      response:
+        success: "セッションクッキー付きで/homeにリダイレクト"
+        error: "エラーページまたはメッセージ"
+      description: "トークンを検証しセッションを作成してリダイレクト"
+      status: "実装済み"
+
+  database_models:
+    status: "実装済み"
+    description: "Prismaスキーマで定義されたモデル"
+    User:
+      status: "実装済み"
+      fields:
+        id: "String (CUID)"
+        uid: "String (ユニーク)"
+        email: "String (ユニーク)"
+        name: "String"
+        createdAt: "DateTime"
+        updatedAt: "DateTime"
+
+    Session:
+      status: "実装済み"
+      fields:
+        id: "String (CUID)"
+        sessionToken: "String (ユニーク)"
+        userId: "String"
+        expires: "DateTime"
+
+    VerificationToken:
+      status: "実装済み"
+      fields:
+        identifier: "String"
+        token: "String (ユニーク)"
+        expires: "DateTime"
+
+  pages:
+    status: "実装済み"
+    description: "Next.js App Routerのページコンポーネント"
+    signin:
+      path: "/auth/signin"
+      component: "LoginForm付きSignInページ"
+      description: "認証のエントリーポイント"
+      status: "実装済み"
+
+    email_sent:
+      path: "/auth/email-sent"
+      component: "EmailSentページ"
+      description: "メール送信完了確認ページ"
+      status: "実装済み"
+
+    verify:
+      path: "/auth/verify"
+      component: "Verifyページ (サーバーコンポーネント)"
+      description: "トークン検証とセッション作成"
+      status: "実装済み"
+
+    home:
+      path: "/home"
+      component: "保護されたホームページ"
+      description: "認証済みユーザーのダッシュボード"
+      status: "実装済み"
+
+  security:
+    status: "実装済み"
+    description: "セキュリティ設定"
+    session_cookie:
+      name: "next-auth.session-token"
+      httpOnly: true
+      path: "/"
+      maxAge: "30日"
+      status: "実装済み"
+
+    token_expiry:
+      verification_token: "1時間"
+      session: "30日"
+      status: "実装済み"
+
+  error_handling:
+    status: "実装済み"
+    description: "エラーハンドリング"
+    invalid_token: "verifyページでエラーメッセージを表示"
+    expired_token: "verifyページでエラーメッセージを表示"
+    server_error: "エラーをログに記録し500ステータスを返す"
+
+  email_service:
+    status: "実装準備完了"
+    description: "認証メール送信機能"
+    current_implementation: "console.log でURLをログ出力（開発用）"
+    required_implementation: "実際のメール送信サービスの導入"
+
+    provider_options:
+      - name: "SendGrid"
+        description: "クラウドベースのメール配信サービス"
+        status: "推奨"
+      - name: "AWS SES"
+        description: "Amazon Simple Email Service"
+        status: "代替"
+      - name: "NodeMailer + SMTP"
+        description: "自前SMTPサーバーまたはGmailなど"
+        status: "シンプル"
+      - name: "MailDev (開発用)"
+        description: "ローカル開発用のメールサーバー"
+        status: "実装済み"
+
+    email_module_design:
+      status: "設計完了"
+      description: "メール送信モジュールの詳細設計"
+      file_path: "lib/email.ts"
+      functions:
+        sendVerificationEmail:
+          status: "実装済み"
+          signature: "sendVerificationEmail(email: string, verificationUrl: string): Promise<void>"
+          description: "認証メールを送信するメイン関数"
+          parameters:
+            email: "受信者のメールアドレス"
+            verificationUrl: "検証リンクのURL"
+          implementation_steps:
+            1: "メールテンプレートの生成"
+            2: "トランスポーターの設定"
+            3: "メール送信の実行"
+            4: "エラーハンドリング"
+          error_handling:
+            - "送信失敗時はエラーログを記録"
+            - "開発環境ではMailDevを使用"
+            - "本番環境ではSendGridを使用"
+
+      configuration:
+        status: "設計完了"
+        environment_variables:
+          NODE_ENV: "実行環境 (development/production)"
+          EMAIL_FROM: "送信元メールアドレス"
+          SENDGRID_API_KEY: "SendGrid APIキー (本番用)"
+          MAILDEV_HOST: "MailDevホスト (開発用, デフォルト: localhost)"
+          MAILDEV_PORT: "MailDevポート (開発用, デフォルト: 1025)"
+        transporter_config:
+          development:
+            host: "localhost"
+            port: 1025
+            secure: false
+          production:
+            service: "SendGrid"
+            auth:
+              api_key: "${SENDGRID_API_KEY}"
+
+      email_template:
+        status: "設計完了"
+        subject: "ログインリンク"
+        content_type: "text/plain"
+        body_template: |
+          グループメンバーリストにログインするには、以下のリンクをクリックしてください：
+
+          {verificationUrl}
+
+          このリンクは1時間以内に有効期限が切れます。
+
+          ※ このメールに心当たりがない場合は無視してください。
+          ※ リンクがクリックできない場合は、URLをブラウザにコピーしてアクセスしてください。
+
+      testing:
+        status: "未実装"
+        unit_tests: "メール送信関数のユニットテスト"
+        integration_tests: "MailDevを使用した統合テスト"
+        mock_implementation: "テスト用のモック送信機能"
+
+    implementation_steps:
+      1:
+        action: "環境変数の設定確認"
+        description: ".env.local に必要な変数を追加"
+        status: "未実装"
+      2:
+        action: "メール送信ユーティリティの作成"
+        file: "lib/email.ts"
+        description: "sendVerificationEmail 関数を実装"
+        status: "実装済み"
+      3:
+        action: "/api/login の更新"
+        description: "console.log を sendVerificationEmail 呼び出しに置き換え"
+        status: "実装済み"
+      4:
+        action: "開発環境でのテスト"
+        description: "npm run dev:mail でMailDevを起動しテスト"
+        status: "未実装"
+      5:
+        action: "本番環境設定"
+        description: "SendGrid APIキーの設定とテスト"
+        status: "未実装"
+
+    typescript_types_consideration:
+      status: "設計完了"
+      description: "@types/nodemailer の導入理由とベストプラクティス"
+      issue: "nodemailer v7 の組み込み型定義が VS Code で認識されない"
+      solution: "@types/nodemailer を devDependencies に追加"
+      reasoning:
+        - "nodemailer v7 は TypeScript 型定義を組み込みで提供しているが、VS Code の言語サーバーが正しく認識しない場合がある"
+        - "@types/nodemailer を明示的にインストールすることで、安定した型チェックと IntelliSense が保証される"
+        - "開発環境での型安全性が向上し、エディタの赤線表示が解消される"
+        - "nodemailer のバージョンアップによる型定義の変更に影響されにくくなる"
+      best_practice:
+        - "ライブラリが組み込み型定義を提供していても、@types パッケージが存在する場合はインストールを推奨"
+        - "特に VS Code を使用する場合、型定義の安定性が開発効率に直結する"
+        - "devDependencies に配置することで、本番ビルドには影響を与えない"
+      installation_command: "npm install --save-dev @types/nodemailer"
+    package_json_consideration:
+      status: "設計完了"
+      description: "package.json への記載に関する考慮事項"
+      recommendation: "devDependencies に記載する"
+      reasons_for_including:
+        - "プロジェクトの再現性を確保（他の開発者が npm install で同じ環境を構築可能）"
+        - "バージョン管理が可能（特定のバージョンの型定義を固定）"
+        - "CI/CD パイプラインでの自動インストールが可能"
+        - "チーム開発での一貫性確保"
+      potential_issues_with_including:
+        - "devDependencies が増加し、package.json が肥大化"
+        - "一部のホスティングサービスで本番環境でも devDependencies がインストールされる場合がある"
+        - "記載ミスで dependencies に入れてしまい、本番バンドルに含まれてしまうリスク"
+        - "型定義は実行時に不要なので、本番環境では無駄な容量になる"
+      reasons_against_not_including:
+        - "他の開発者が手動でインストールする必要があり、セットアップが複雑化"
+        - "バージョンが明示されず、環境によって型定義が異なる可能性"
+        - "プロジェクトのドキュメント性が低下"
+        - "CI/CD で型チェックが失敗する可能性"
+      best_approach:
+        - "devDependencies に明示的に記載"
+        - "--save-dev フラグを使用"
+        - "定期的に devDependencies を整理"
+        - "本番ビルドでは devDependencies を除外するようホスティングサービスを設定"
