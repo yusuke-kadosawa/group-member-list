@@ -16,6 +16,11 @@ const Layout: React.FC<LayoutProps> = ({ children, session }) => {
       <aside className="w-64 bg-white dark:bg-gray-800 h-full shadow-md">
         <nav className="flex flex-col gap-2">
           <NavigationItem
+            title="ホーム"
+            description="ダッシュボードに戻る"
+            href="/home"
+          />
+          <NavigationItem
             title="グループ管理"
             description="グループの作成とメンバー管理"
             href="/groups"
@@ -24,11 +29,13 @@ const Layout: React.FC<LayoutProps> = ({ children, session }) => {
             title="ユーザー管理"
             description="ユーザーの招待と権限設定"
             href="/users"
+            disabled
           />
           <NavigationItem
             title="活動管理"
             description="活動の計画と参加者管理"
             href="/activities"
+            disabled
           />
         </nav>
       </aside>
