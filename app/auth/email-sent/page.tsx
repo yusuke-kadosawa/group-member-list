@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import { resendEmail } from "@/app/api/resend-email";
 
 export default function EmailSent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { data: session } = useSession();
+  const email = session?.user?.email;
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
@@ -22,10 +25,10 @@ export default function EmailSent() {
           <form
             onSubmit={async (e) => {
               e.preventDefault();
-              if (isSubmitting) return;
+              if (isSubmitting || !email) return;
               setIsSubmitting(true);
               try {
-                await resendEmail();
+                await resendEmail(email);
               } catch (error) {
                 console.error("メール再送信エラー", error);
               } finally {
@@ -36,9 +39,9 @@ export default function EmailSent() {
             <button
               type="submit"
               className={`px-4 py-2 rounded-md transition-colors text-white ${
-                isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-gray-500 hover:bg-gray-600"
+                isSubmitting || !email ? "bg-gray-400 cursor-not-allowed" : "bg-gray-500 hover:bg-gray-600"
               }`}
-              disabled={isSubmitting}
+              disabled={isSubmitting || !email}
             >
               メールを再送信
             </button>

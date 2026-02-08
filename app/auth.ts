@@ -30,4 +30,24 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/",
     error: "/auth/error",
   },
+  callbacks: {
+    async signIn({ user, account, profile, email, credentials }) {
+      if (account?.provider === "email" && email) {
+        return `/auth/email-sent`;
+      }
+      return true;
+    },
+    async jwt({ token, account, profile, user }) {
+      if (account?.provider === "email" && user?.email) {
+        token.email = user.email;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token.email) {
+        session.user.email = token.email;
+      }
+      return session;
+    },
+  },
 })
