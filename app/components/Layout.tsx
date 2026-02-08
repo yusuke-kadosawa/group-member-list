@@ -31,7 +31,6 @@ const Layout: React.FC<LayoutProps> = ({ children, session, headerTitle }) => {
             title="ユーザー管理"
             description="ユーザーの招待と権限設定"
             href="/users"
-            disabled
           />
           <NavigationItem
             title="活動管理"
