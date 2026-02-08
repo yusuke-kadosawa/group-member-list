@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import NavigationItem from "../components/NavigationItem"
 import Layout from "../components/Layout"
+import { logRenderDuration } from "@/lib/logging"
 
 export default async function Home() {
   const renderStart = Date.now()
@@ -39,8 +40,7 @@ export default async function Home() {
     redirect("/auth/signin")
   }
 
-  const renderDur = Date.now() - renderStart
-  console.log(`[home] render for ${session.user?.email || 'unknown'} completed in ${renderDur}ms`)
+  logRenderDuration("home", session, renderStart);
 
   return (
     <Layout session={session}>

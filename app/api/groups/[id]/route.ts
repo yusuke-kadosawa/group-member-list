@@ -5,6 +5,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const start = Date.now()
   try {
     const id = parseInt(params.id)
     if (isNaN(id)) {
@@ -19,9 +20,13 @@ export async function GET(
       return NextResponse.json({ error: 'group not found' }, { status: 404 })
     }
 
+    const duration = Date.now() - start
+    console.log(`[groups/${params.id}] GET completed in ${duration}ms`)
     return NextResponse.json({ group })
   } catch (e) {
     console.error(`/api/groups/${params.id} GET error`, e)
+    const duration = Date.now() - start
+    console.log(`[groups/${params.id}] GET failed in ${duration}ms`)
     return NextResponse.json({ error: 'server error' }, { status: 500 })
   }
 }
@@ -30,6 +35,7 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const start = Date.now()
   try {
     const id = parseInt(params.id)
     if (isNaN(id)) {
@@ -51,9 +57,13 @@ export async function PUT(
       },
     })
 
+    const duration = Date.now() - start
+    console.log(`[groups/${params.id}] PUT completed in ${duration}ms`)
     return NextResponse.json({ group })
   } catch (e) {
     console.error(`/api/groups/${params.id} PUT error`, e)
+    const duration = Date.now() - start
+    console.log(`[groups/${params.id}] PUT failed in ${duration}ms`)
     return NextResponse.json({ error: 'server error' }, { status: 500 })
   }
 }
@@ -62,6 +72,7 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const start = Date.now()
   try {
     const id = parseInt(params.id)
     if (isNaN(id)) {
@@ -72,9 +83,13 @@ export async function DELETE(
       where: { id },
     })
 
+    const duration = Date.now() - start
+    console.log(`[groups/${params.id}] DELETE completed in ${duration}ms`)
     return NextResponse.json({ ok: true })
   } catch (e) {
     console.error(`/api/groups/${params.id} DELETE error`, e)
+    const duration = Date.now() - start
+    console.log(`[groups/${params.id}] DELETE failed in ${duration}ms`)
     return NextResponse.json({ error: 'server error' }, { status: 500 })
   }
 }

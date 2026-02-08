@@ -6,6 +6,20 @@ import Link from "next/link"
 import GroupForm from "@/app/components/GroupForm"
 
 export default async function EditGroupPage({ params }: { params: { id: string } }) {
+  const id = parseInt(await Promise.resolve(params.id));
+
+  if (isNaN(id)) {
+    notFound();
+  }
+
+  const group = await prisma.group.findUnique({
+    where: { id },
+  });
+
+  if (!group) {
+    notFound();
+  }
+
   let session: any = undefined
   if (typeof auth === 'function') {
     session = await auth()
@@ -31,19 +45,6 @@ export default async function EditGroupPage({ params }: { params: { id: string }
 
   if (!session) {
     redirect("/auth/signin")
-  }
-
-  const id = parseInt(params.id)
-  if (isNaN(id)) {
-    notFound()
-  }
-
-  const group = await prisma.group.findUnique({
-    where: { id },
-  })
-
-  if (!group) {
-    notFound()
   }
 
   return (
