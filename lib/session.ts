@@ -1,6 +1,41 @@
-import { cookies } from 'next/headers'
-import { prisma } from './prisma'
-import { redirect } from 'next/navigation'
+import { auth } from "@/app/auth";
+import { cookies } from "next/headers";
+import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
+
+export async function getSession(): Promise<any> {
+  let session: any = undefined;
+
+  if (typeof auth === "function") {
+    session = await auth();
+  }
+
+  if (!session) {
+    try {
+      const cookieStore = await cookies();
+      const token = cookieStore.get("next-auth.session-token")?.value;
+      if (token) {
+        const dbSession = await prisma.session.findUnique({
+          where: { sessionToken: token },
+          include: { user: true },
+        });
+        if (dbSession && dbSession.expires > new Date()) {
+          session = {
+            user: {
+              id: dbSession.user.id,
+              name: dbSession.user.name,
+              email: dbSession.user.email,
+            },
+          };
+        }
+      }
+    } catch (e) {
+      console.error("session fallback error", e);
+    }
+  }
+
+  return session;
+}
 
 type SessionWithUser = {
   session: {
@@ -46,10 +81,10 @@ export async function getServerSession(): Promise<SessionWithUser | null> {
  * サーバー側で認証が必須な処理に対して使用します。
  * 認証されていなければ `redirectTo` にリダイレクトします。
  */
-export async function requireServerSession(redirectTo = '/auth/signin') {
-  const s = await getServerSession()
-  if (!s) redirect(`${redirectTo}`)
-  return s
+export async function requireServerSession(redirectTo = "/auth/signin") {
+  const s = await getSession();
+  if (!s) redirect(`${redirectTo}`);
+  return s;
 }
 
 /**

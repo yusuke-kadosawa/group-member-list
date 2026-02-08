@@ -1,4 +1,4 @@
-import { auth } from "@/app/auth"
+import { getSession } from "@/lib/session"
 import LogoutButton from "@/app/components/LogoutButton"
 import { redirect } from "next/navigation"
 import { cookies } from "next/headers"
@@ -11,9 +11,7 @@ import { logRenderDuration } from "@/lib/logging"
 export default async function Home() {
   const renderStart = Date.now()
   let session: any = undefined
-  if (typeof auth === 'function') {
-    session = await auth()
-  }
+  session = await getSession()
 
   // フォールバック: auth() がセッションを返さない場合、cookie を直接参照して DB の sessions を確認
   if (!session) {
