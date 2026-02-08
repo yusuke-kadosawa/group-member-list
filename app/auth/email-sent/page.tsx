@@ -1,13 +1,24 @@
 "use client";
 
-import { useState } from "react";
-import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { resendEmail } from "@/app/api/resend-email";
 
+const RESEND_COOLDOWN_MS = 3000; // 再送信クールダウン時間（ミリ秒）
+
 export default function EmailSent() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { data: session } = useSession();
-  const email = session?.user?.email;
+  const [isSubmitting, setIsSubmitting] = useState(true); // 初期状態を無効に
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
+  console.log("email:", email);
+
+  useEffect(() => {
+    // ページ遷移直後に3秒待って有効化
+    const timer = setTimeout(() => {
+      setIsSubmitting(false);
+    }, RESEND_COOLDOWN_MS);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
@@ -32,14 +43,18 @@ export default function EmailSent() {
               } catch (error) {
                 console.error("メール再送信エラー", error);
               } finally {
-                setTimeout(() => setIsSubmitting(false), 3000); // 3秒間ボタンを無効化
+                console.log("3秒後にボタンを有効化します");
+                setTimeout(() => {
+                  console.log("ボタンを有効化");
+                  setIsSubmitting(false);
+                }, RESEND_COOLDOWN_MS);
               }
             }}
           >
             <button
               type="submit"
               className={`px-4 py-2 rounded-md transition-colors text-white ${
-                isSubmitting || !email ? "bg-gray-400 cursor-not-allowed" : "bg-gray-500 hover:bg-gray-600"
+                isSubmitting || !email ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
               }`}
               disabled={isSubmitting || !email}
             >

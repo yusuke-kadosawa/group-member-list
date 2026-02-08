@@ -27,27 +27,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     maxAge: 30 * 24 * 60 * 60, // 30日
   },
   pages: {
-    signIn: "/",
     error: "/auth/error",
   },
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
       if (account?.provider === "email" && email) {
-        return `/auth/email-sent`;
+        return `/auth/email-sent?email=${encodeURIComponent(email)}`;
       }
       return true;
-    },
-    async jwt({ token, account, profile, user }) {
-      if (account?.provider === "email" && user?.email) {
-        token.email = user.email;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (token.email) {
-        session.user.email = token.email;
-      }
-      return session;
     },
   },
 })

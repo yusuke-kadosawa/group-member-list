@@ -17,7 +17,7 @@ export default function LoginForm() {
         body: JSON.stringify({ email }),
       })
       if (res.ok) {
-        router.push('/auth/email-sent')
+        router.push(`/auth/email-sent?email=${encodeURIComponent(email)}`)
       } else {
         const j = await res.json().catch(() => ({}))
         alert(j?.error || '認証に失敗しました')
