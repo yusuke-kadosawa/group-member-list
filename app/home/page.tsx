@@ -29,13 +29,14 @@ export default async function Home() {
         }
       }
     } catch (e) {
-      console.error('session fallback error', e)
+      console.error('session fallback error', e);
     }
-  }
 
-  if (!session) {
-    console.log(`[home] no session - redirect to /auth/signin`)
-    redirect("/auth/signin")
+    // セッションが存在しない場合、サインインページにリダイレクト
+    if (!session) {
+      console.log(`[home] no session - redirect to /`);
+      redirect("/");
+    }
   }
 
   logRenderDuration("home", session, renderStart);

@@ -30,7 +30,7 @@ export default async function NewGroupPage() {
   }
 
   if (!session) {
-    redirect("/auth/signin")
+    redirect("/")
   }
 
   return (

@@ -32,7 +32,7 @@ export default async function GroupsPage() {
   }
 
   if (!session) {
-    redirect("/auth/signin")
+    redirect("/")
   }
 
   const renderStart = Date.now();

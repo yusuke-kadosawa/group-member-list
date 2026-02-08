@@ -44,7 +44,7 @@ export default async function EditGroupPage({ params }: { params: { id: string }
   }
 
   if (!session) {
-    redirect("/auth/signin")
+    redirect("/")
   }
 
   return (
