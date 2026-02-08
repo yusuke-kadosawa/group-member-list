@@ -4,7 +4,7 @@ import { redirect } from "next/navigation"
 import { cookies } from "next/headers"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
-import ManagementCard from "@/app/components/ManagementCard"
+import NavigationItem from "../components/NavigationItem"
 import Layout from "../components/Layout"
 
 export default async function Home() {

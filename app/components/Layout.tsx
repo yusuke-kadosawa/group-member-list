@@ -1,5 +1,5 @@
 import React from "react"
-import ManagementCard from "@/app/components/ManagementCard"
+import NavigationItem from "./NavigationItem"
 
 interface LayoutProps {
   children: React.ReactNode
@@ -15,17 +15,17 @@ const Layout: React.FC<LayoutProps> = ({ children, session }) => {
     <div className="flex">
       <aside className="w-64 bg-white dark:bg-gray-800 h-full shadow-md">
         <nav className="flex flex-col gap-2">
-          <ManagementCard
+          <NavigationItem
             title="グループ管理"
             description="グループの作成とメンバー管理"
             href="/groups"
           />
-          <ManagementCard
+          <NavigationItem
             title="ユーザー管理"
             description="ユーザーの招待と権限設定"
             href="/users"
           />
-          <ManagementCard
+          <NavigationItem
             title="活動管理"
             description="活動の計画と参加者管理"
             href="/activities"
