@@ -1,46 +1,53 @@
-import { redirect } from 'next/navigation'
-import { prisma } from '@/lib/prisma'
-import { randomUUID } from 'crypto'
-import { cookies } from 'next/headers'
+'use client'
 
-interface PageProps {
-  searchParams: { [key: string]: string | string[] | undefined }
-}
+import { useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 
-export default async function VerifyPage({ searchParams }: PageProps) {
-  const token = typeof searchParams.token === 'string' ? searchParams.token : null
-  if (!token) {
-    return <div>Invalid token</div>
-  }
+export default function VerifyPage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  try {
-    const verificationToken = await prisma.verificationToken.findFirst({
-      where: { token, expires: { gt: new Date() } }
-    })
-    if (!verificationToken) {
-      return <div>Invalid or expired token</div>
+  useEffect(() => {
+    const token = searchParams.get('token')
+    if (!token) {
+      setError('Invalid token')
+      setLoading(false)
+      return
     }
 
-    let user = await prisma.user.findFirst({ where: { email: verificationToken.identifier } })
-    if (!user) {
-      user = await prisma.user.create({ data: { uid: verificationToken.identifier, email: verificationToken.identifier, name: verificationToken.identifier.split('@')[0] } })
-    }
+    // Call API to verify token and create session
+    fetch(`/api/auth/verify?token=${token}`)
+      .then(response => {
+        if (response.redirected) {
+          // If redirected, follow the redirect
+          window.location.href = response.url
+        } else if (response.ok) {
+          // If successful, redirect to home
+          router.push('/home')
+        } else {
+          return response.json().then(data => {
+            throw new Error(data.error || 'Verification failed')
+          })
+        }
+      })
+      .catch(err => {
+        console.error('verify error', err)
+        setError(err.message || 'Server error')
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }, [searchParams, router])
 
-    // Create session
-    const sessionToken = randomUUID()
-    const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-    await prisma.session.create({ data: { sessionToken, userId: user.id, expires } })
-
-    // Delete verification token
-    await prisma.verificationToken.delete({ where: { token } })
-
-    // Set cookie
-    const cookieStore = await cookies()
-    cookieStore.set('next-auth.session-token', sessionToken, { httpOnly: true, path: '/', expires })
-
-    redirect('/home')
-  } catch (e) {
-    console.error('verify error', e)
-    return <div>Server error</div>
+  if (loading) {
+    return <div>Verifying...</div>
   }
+
+  if (error) {
+    return <div>Server error: {error}</div>
+  }
+
+  return <div>Redirecting...</div>
 }

@@ -1,8 +1,0 @@
-Step,Title,Executed,Result,Notes
-1,"auth.ts に PrismaAdapter を追加",Yes,Success,"PrismaAdapter をインポートして追加済み"
-2,"Session strategy を database に変更",Yes,Success,"session strategy を 'database' に変更済み"
-3,"環境変数を設定",Yes,Success,"NEXTAUTH_URL, NEXTAUTH_SECRET, DATABASE_URL を .env.local に追加済み"
-4,"Next.js キャッシュをクリア",Yes,Success,".next ディレクトリを削除済み"
-5,"開発サーバーを再起動",In Progress,Pending,"再実行中"
-6,"動作確認",No,Pending,"エラー解決待ち"
-7,"node_modules 再インストール",Yes,Success,"node_modules を削除して再インストール完了"
