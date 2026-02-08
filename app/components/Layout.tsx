@@ -17,7 +17,7 @@ const Layout: React.FC<LayoutProps> = ({ children, session }) => {
         <nav className="flex flex-col gap-2">
           <NavigationItem
             title="ホーム"
-            description="ダッシュボードに戻る"
+            description="ダッシュボード"
             href="/home"
           />
           <NavigationItem
