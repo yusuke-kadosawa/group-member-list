@@ -23,7 +23,7 @@ type SessionWithUser = {
  * 戻り値が null の場合は認証されていません。
  */
 export async function getServerSession(): Promise<SessionWithUser | null> {
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   const token =
     cookieStore.get('__Secure-next-auth.session-token')?.value ??
     cookieStore.get('next-auth.session-token')?.value ??
