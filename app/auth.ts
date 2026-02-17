@@ -3,7 +3,7 @@ import Email from "next-auth/providers/email"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { prisma } from "@/lib/prisma"
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export default NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
     Email({

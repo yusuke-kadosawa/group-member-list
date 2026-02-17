@@ -1,4 +1,6 @@
-import { auth } from "@/app/auth"
+import { getServerSession } from "next-auth"
+import type { Session } from "next-auth"
+import authOptions from "@/app/auth"
 import { redirect } from "next/navigation"
 import { cookies } from "next/headers"
 import { prisma } from "@/lib/prisma"
@@ -7,12 +9,9 @@ import GroupList from "@/app/components/GroupList"
 import Layout from "../components/Layout"
 
 export default async function GroupsPage() {
-  let session: any = undefined
-  if (typeof auth === 'function') {
-    session = await auth()
-  }
+  let session: Session | null = await getServerSession(authOptions)
 
-  // フォールバック: auth() がセッションを返さない場合、cookie を直接参照
+  // フォールバック: session が取得できない場合、cookie を直接参照
   if (!session) {
     try {
       const cookieStore = await cookies()
@@ -23,7 +22,7 @@ export default async function GroupsPage() {
           include: { user: true },
         })
         if (dbSession && dbSession.expires > new Date()) {
-          session = { user: { id: dbSession.user.id, name: dbSession.user.name, email: dbSession.user.email } }
+          session = { user: { id: dbSession.user.id, name: dbSession.user.name, email: dbSession.user.email } } as any
         }
       }
     } catch (e) {

@@ -3,10 +3,7 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const id = parseInt(params.id)
-    if (isNaN(id)) {
-      return NextResponse.json({ error: 'Invalid ID' }, { status: 400 })
-    }
+    const id = params.id
 
     const user = await prisma.user.findUnique({
       where: { id },
@@ -32,10 +29,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const id = parseInt(params.id)
-    if (isNaN(id)) {
-      return NextResponse.json({ error: 'Invalid ID' }, { status: 400 })
-    }
+    const id = params.id
 
     const body = await req.json()
     const { name, email } = body
@@ -68,10 +62,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const id = parseInt(params.id)
-    if (isNaN(id)) {
-      return NextResponse.json({ error: 'Invalid ID' }, { status: 400 })
-    }
+    const id = params.id
 
     await prisma.user.delete({
       where: { id },
