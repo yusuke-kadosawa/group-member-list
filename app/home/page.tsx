@@ -11,7 +11,12 @@ import { logRenderDuration } from "@/lib/logging"
 export default async function Home() {
   const renderStart = Date.now()
   let session: any = undefined
-  session = await getSession()
+  
+  try {
+    session = await getSession()
+  } catch (e) {
+    console.error('getSession error', e)
+  }
 
   // フォールバック: auth() がセッションを返さない場合、cookie を直接参照して DB の sessions を確認
   if (!session) {
@@ -31,12 +36,12 @@ export default async function Home() {
     } catch (e) {
       console.error('session fallback error', e);
     }
+  }
 
-    // セッションが存在しない場合、サインインページにリダイレクト
-    if (!session) {
-      console.log(`[home] no session - redirect to /`);
-      redirect("/");
-    }
+  // セッションが存在しない場合、サインインページにリダイレクト
+  if (!session) {
+    console.log(`[home] no session - redirect to /`);
+    redirect("/");
   }
 
   logRenderDuration("home", session, renderStart);

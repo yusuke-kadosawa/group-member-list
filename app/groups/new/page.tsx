@@ -1,4 +1,4 @@
-import { auth } from "@/app/auth"
+import auth from "@/app/auth"
 import { redirect } from "next/navigation"
 import { cookies } from "next/headers"
 import { prisma } from "@/lib/prisma"

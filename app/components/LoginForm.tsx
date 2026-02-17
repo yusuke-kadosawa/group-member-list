@@ -1,5 +1,6 @@
 "use client"
 import { useState } from 'react'
+import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
 export default function LoginForm() {
@@ -11,19 +12,18 @@ export default function LoginForm() {
     e.preventDefault()
     setLoading(true)
     try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+      const result = await signIn('email', {
+        email,
+        redirect: false,
       })
-      if (res.ok) {
+      
+      if (result?.ok) {
         router.push(`/auth/email-sent?email=${encodeURIComponent(email)}`)
       } else {
-        const j = await res.json().catch(() => ({}))
-        alert(j?.error || '認証に失敗しました')
+        alert('認証に失敗しました')
       }
     } catch (e) {
-      console.error('login fetch error', e)
+      console.error('login error', e)
       alert('ネットワークエラー')
     } finally {
       setLoading(false)

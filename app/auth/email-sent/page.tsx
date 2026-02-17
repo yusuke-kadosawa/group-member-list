@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { resendEmail } from "@/app/api/resend-email";
+import { signIn } from "next-auth/react";
 
 const RESEND_COOLDOWN_MS = 3000; // 再送信クールダウン時間（ミリ秒）
 
@@ -20,6 +20,26 @@ export default function EmailSent() {
     return () => clearTimeout(timer);
   }, []);
 
+  const handleResend = async () => {
+    if (isSubmitting || !email) return;
+    setIsSubmitting(true);
+    try {
+      await signIn('email', {
+        email,
+        redirect: false,
+      });
+      console.log("メールを再送信しました");
+    } catch (error) {
+      console.error("メール再送信エラー", error);
+    } finally {
+      console.log("3秒後にボタンを有効化します");
+      setTimeout(() => {
+        console.log("ボタンを有効化");
+        setIsSubmitting(false);
+      }, RESEND_COOLDOWN_MS);
+    }
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <div className="flex flex-col items-center justify-center py-32 px-16 bg-white dark:bg-black rounded-lg shadow-lg text-center">
@@ -33,34 +53,15 @@ export default function EmailSent() {
         </p>
 
         <div className="flex gap-4">
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault();
-              if (isSubmitting || !email) return;
-              setIsSubmitting(true);
-              try {
-                await resendEmail(email);
-              } catch (error) {
-                console.error("メール再送信エラー", error);
-              } finally {
-                console.log("3秒後にボタンを有効化します");
-                setTimeout(() => {
-                  console.log("ボタンを有効化");
-                  setIsSubmitting(false);
-                }, RESEND_COOLDOWN_MS);
-              }
-            }}
+          <button
+            onClick={handleResend}
+            className={`px-4 py-2 rounded-md transition-colors text-white ${
+              isSubmitting || !email ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
+            }`}
+            disabled={isSubmitting || !email}
           >
-            <button
-              type="submit"
-              className={`px-4 py-2 rounded-md transition-colors text-white ${
-                isSubmitting || !email ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
-              }`}
-              disabled={isSubmitting || !email}
-            >
-              メールを再送信
-            </button>
-          </form>
+            メールを再送信
+          </button>
 
           <a
             href="/"

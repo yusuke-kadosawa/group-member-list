@@ -3,17 +3,18 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   const start = Date.now()
   try {
-    const id = parseInt(params.id)
-    if (isNaN(id)) {
+    const groupId = parseInt(id)
+    if (isNaN(groupId)) {
       return NextResponse.json({ error: 'invalid id' }, { status: 400 })
     }
 
     const group = await prisma.group.findUnique({
-      where: { id },
+      where: { id: groupId },
     })
 
     if (!group) {
@@ -21,24 +22,25 @@ export async function GET(
     }
 
     const duration = Date.now() - start
-    console.log(`[groups/${params.id}] GET completed in ${duration}ms`)
+    console.log(`[groups/${id}] GET completed in ${duration}ms`)
     return NextResponse.json({ group })
   } catch (e) {
-    console.error(`/api/groups/${params.id} GET error`, e)
+    console.error(`/api/groups/${id} GET error`, e)
     const duration = Date.now() - start
-    console.log(`[groups/${params.id}] GET failed in ${duration}ms`)
+    console.log(`[groups/${id}] GET failed in ${duration}ms`)
     return NextResponse.json({ error: 'server error' }, { status: 500 })
   }
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   const start = Date.now()
   try {
-    const id = parseInt(params.id)
-    if (isNaN(id)) {
+    const groupId = parseInt(id)
+    if (isNaN(groupId)) {
       return NextResponse.json({ error: 'invalid id' }, { status: 400 })
     }
 
@@ -50,7 +52,7 @@ export async function PUT(
     }
 
     const group = await prisma.group.update({
-      where: { id },
+      where: { id: groupId },
       data: {
         name,
         description: description || null,
@@ -58,38 +60,39 @@ export async function PUT(
     })
 
     const duration = Date.now() - start
-    console.log(`[groups/${params.id}] PUT completed in ${duration}ms`)
+    console.log(`[groups/${id}] PUT completed in ${duration}ms`)
     return NextResponse.json({ group })
   } catch (e) {
-    console.error(`/api/groups/${params.id} PUT error`, e)
+    console.error(`/api/groups/${id} PUT error`, e)
     const duration = Date.now() - start
-    console.log(`[groups/${params.id}] PUT failed in ${duration}ms`)
+    console.log(`[groups/${id}] PUT failed in ${duration}ms`)
     return NextResponse.json({ error: 'server error' }, { status: 500 })
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   const start = Date.now()
   try {
-    const id = parseInt(params.id)
-    if (isNaN(id)) {
+    const groupId = parseInt(id)
+    if (isNaN(groupId)) {
       return NextResponse.json({ error: 'invalid id' }, { status: 400 })
     }
 
     await prisma.group.delete({
-      where: { id },
+      where: { id: groupId },
     })
 
     const duration = Date.now() - start
-    console.log(`[groups/${params.id}] DELETE completed in ${duration}ms`)
+    console.log(`[groups/${id}] DELETE completed in ${duration}ms`)
     return NextResponse.json({ ok: true })
   } catch (e) {
-    console.error(`/api/groups/${params.id} DELETE error`, e)
+    console.error(`/api/groups/${id} DELETE error`, e)
     const duration = Date.now() - start
-    console.log(`[groups/${params.id}] DELETE failed in ${duration}ms`)
+    console.log(`[groups/${id}] DELETE failed in ${duration}ms`)
     return NextResponse.json({ error: 'server error' }, { status: 500 })
   }
 }

@@ -6,8 +6,10 @@ import { redirect } from "next/navigation";
 export async function getSession(): Promise<any> {
   let session: any = undefined;
 
-  if (typeof auth === "function") {
+  try {
     session = await auth();
+  } catch (e) {
+    console.error("auth() error", e);
   }
 
   if (!session) {

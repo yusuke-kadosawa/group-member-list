@@ -15,12 +15,12 @@ export async function POST(req: Request) {
     }
 
     const token = randomUUID()
-    const expires = new Date(Date.now() + 1 * 60 * 60 * 1000) // 1 hour
+    const expires = new Date(Date.now() + 5 * 60 * 1000) // 5 minutes for testing
     
     // Delete any existing verification tokens for this email
     await prisma.verificationToken.deleteMany({ where: { identifier: email } })
     
-    console.log('Creating token:', token, 'expires:', expires.toISOString())
+    console.log('Creating token:', token, 'expires:', expires.toISOString(), 'current time:', new Date().toISOString())
     await prisma.verificationToken.create({ data: { identifier: email, token, expires } })
 
     // TODO: Send email with verification URL

@@ -1,14 +1,15 @@
-import { auth } from "@/app/auth"
+import auth from "@/app/auth"
 import { redirect, notFound } from "next/navigation"
 import { cookies } from "next/headers"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import GroupForm from "@/app/components/GroupForm"
 
-export default async function EditGroupPage({ params }: { params: { id: string } }) {
-  const id = parseInt(await Promise.resolve(params.id));
+export default async function EditGroupPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const groupId = parseInt(id);
 
-  if (isNaN(id)) {
+  if (isNaN(groupId)) {
     notFound();
   }
 

@@ -7,7 +7,12 @@ export default NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
     Email({
-      server: {
+      server: process.env.NODE_ENV === 'development' ? {
+        host: 'localhost',
+        port: 1025,
+        secure: false,
+        ignoreTLS: true,
+      } : {
         host: process.env.EMAIL_SERVER_HOST || "smtp.gmail.com",
         port: Number(process.env.EMAIL_SERVER_PORT) || 587,
         auth: {
@@ -16,10 +21,6 @@ export default NextAuth({
         },
       },
       from: process.env.EMAIL_FROM || "noreply@example.com",
-      sendVerificationRequest: async ({ identifier, url }) => {
-        console.log(`開発モード: 認証リンク: ${url}`)
-        // 開発時はメール送信をスキップ
-      },
     }),
   ],
   session: {
