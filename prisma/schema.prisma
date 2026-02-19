@@ -19,36 +19,35 @@ enum AuthType {
 }
 
 model Email {
-  id           Int       @id @default(autoincrement())
-  email        String    @unique
-  authType     AuthType
-  userId       Int
-  priority     Int?
-  activatedAt  DateTime?
-  createdAt    DateTime  @default(now())
-  
-  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id          Int       @id @default(autoincrement())
+  email       String    @unique
+  authType    AuthType
+  userId      Int
+  priority    Int?
+  activatedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@map("emails")
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  uid       String    @unique
-  passwd    String?
-  name      String?
-  email     String?   @unique
-  image     String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id            Int       @id @default(autoincrement())
+  uid           String    @unique
+  passwd        String?
+  name          String?
+  email         String?   @unique
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
   emailVerified DateTime?
-  
-  accounts Account[]
-  sessions Session[]
-  emails   Email[]
-  
+
+  accounts      Account[]
+  sessions      Session[]
+  emails        Email[]
+  groupUsers    GroupUser[]
   activityUsers ActivityUser[]
-  
+
   @@map("users")
 }
 
@@ -59,61 +58,69 @@ model Group {
   description   String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  
+
   parent   Group?  @relation("GroupHierarchy", fields: [parentGroupId], references: [id])
   children Group[] @relation("GroupHierarchy")
-  
+
+  groupUsers     GroupUser[]
   activityGroups ActivityGroup[]
-  
+
   @@map("groups")
 }
 
 model GroupUser {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  groupId   Int
-  role      Int
-  joinedAt  DateTime @default(now())
-  
+  id       Int      @id @default(autoincrement())
+  userId   Int
+  groupId  Int
+  role     Int
+  joinedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, groupId])
   @@map("group_users")
 }
 
 model Place {
-  id        Int     @id @default(autoincrement())
+  id        Int    @id @default(autoincrement())
   name      String
   latitude  Float?
   longitude Float?
-  
-  activities Activity[]
-  
+
+  activities        Activity[]
+  activityTemplates ActivityTemplate[]
+
   @@map("places")
 }
 
 model ActivityTemplate {
-  id          Int    @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   name        String
   description String?
   whenType    Int
   when        String
   placeId     Int?
-  
+
+  place Place? @relation(fields: [placeId], references: [id])
+
   @@map("activity_templates")
 }
 
 model Activity {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   name        String
   description String?
   startedAt   DateTime
   finishedAt  DateTime?
   placeId     Int?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  place   Place?   @relation(fields: [placeId], references: [id])
-  groups  ActivityGroup[]
-  users   ActivityUser[]
-  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  place  Place?          @relation(fields: [placeId], references: [id])
+  groups ActivityGroup[]
+  users  ActivityUser[]
+
   @@map("activities")
 }
 
@@ -121,10 +128,10 @@ model ActivityGroup {
   id         Int @id @default(autoincrement())
   activityId Int
   groupId    Int
-  
+
   activity Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
   group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  
+
   @@unique([activityId, groupId])
   @@map("activity_groups")
 }
@@ -136,10 +143,10 @@ model ActivityUser {
   status     Int
   joinedAt   DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  
+
   activity Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@unique([activityId, userId])
   @@map("activity_users")
 }
