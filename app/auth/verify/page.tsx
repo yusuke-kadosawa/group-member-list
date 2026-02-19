@@ -17,37 +17,27 @@ export default function VerifyPage() {
       return
     }
 
-    // Call API to verify token and create session
-    fetch(`/api/auth/verify?token=${token}`)
-      .then(response => {
-        if (response.redirected) {
-          // If redirected, follow the redirect
-          window.location.href = response.url
-        } else if (response.ok) {
-          // If successful, redirect to home
-          router.push('/home')
-        } else {
-          return response.json().then(data => {
-            throw new Error(data.error || 'Verification failed')
-          })
-        }
-      })
-      .catch(err => {
-        console.error('verify error', err)
-        setError(err.message || 'Server error')
-      })
-      .finally(() => {
-        setLoading(false)
-      })
-  }, [searchParams, router])
-
-  if (loading) {
-    return <div>Verifying...</div>
-  }
+    // Call API to verify token and create session - use window.location for proper cookie handling
+    window.location.href = `/api/auth/verify?token=${token}`
+  }, [searchParams])
 
   if (error) {
-    return <div>Server error: {error}</div>
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">認証エラー</h1>
+          <p className="text-gray-600">{error}</p>
+        </div>
+      </div>
+    )
   }
 
-  return <div>Redirecting...</div>
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold mb-4">認証中...</h1>
+        <p className="text-gray-600">しばらくお待ちください</p>
+      </div>
+    </div>
+  )
 }

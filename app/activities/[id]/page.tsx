@@ -1,0 +1,230 @@
+import { getSession } from "@/lib/session"
+import { redirect, notFound } from "next/navigation"
+import { prisma } from "@/lib/prisma"
+import Layout from "../../components/Layout"
+import Link from "next/link"
+
+interface PageProps {
+  params: Promise<{ id: string }>
+}
+
+const getStatusBadge = (status: string) => {
+  const statusConfig = {
+    draft: { label: '下書き', className: 'bg-gray-100 text-gray-800' },
+    published: { label: '公開中', className: 'bg-blue-100 text-blue-800' },
+    cancelled: { label: 'キャンセル', className: 'bg-red-100 text-red-800' },
+    completed: { label: '完了', className: 'bg-green-100 text-green-800' }
+  }
+  const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.draft
+  return (
+    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${config.className}`}>
+      {config.label}
+    </span>
+  )
+}
+
+const getParticipantStatusBadge = (status: string) => {
+  const statusConfig = {
+    pending: { label: '保留中', className: 'bg-yellow-100 text-yellow-800' },
+    confirmed: { label: '参加確定', className: 'bg-green-100 text-green-800' },
+    declined: { label: '不参加', className: 'bg-red-100 text-red-800' },
+    attended: { label: '参加済み', className: 'bg-blue-100 text-blue-800' }
+  }
+  const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending
+  return (
+    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${config.className}`}>
+      {config.label}
+    </span>
+  )
+}
+
+const formatDateTime = (date: Date) => {
+  return date.toLocaleString('ja-JP', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}
+
+export default async function ActivityDetailPage({ params }: PageProps) {
+  const session = await getSession()
+
+  if (!session) {
+    redirect("/")
+  }
+
+  const { id } = await params
+  const activityId = parseInt(id, 10)
+
+  if (isNaN(activityId)) {
+    notFound()
+  }
+
+  const activity = await prisma.activity.findUnique({
+    where: { id: activityId },
+    include: {
+      place: true,
+      groups: {
+        include: {
+          group: true
+        }
+      },
+      participants: {
+        include: {
+          user: true
+        }
+      }
+    }
+  })
+
+  if (!activity) {
+    notFound()
+  }
+
+  return (
+    <Layout session={session} headerTitle={activity.name}>
+      <div className="min-h-screen bg-zinc-50 font-sans dark:bg-black">
+        <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+          <div className="px-4 py-6 sm:px-0">
+            <div className="max-w-4xl mx-auto">
+              {/* ヘッダー */}
+              <div className="bg-white dark:bg-gray-800 shadow rounded-lg mb-6">
+                <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{activity.name}</h2>
+                    <div className="mt-2 flex items-center gap-4">
+                      {getStatusBadge(activity.status)}
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                        作成日: {formatDateTime(activity.createdAt)}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Link
+                      href={`/activities/${activity.id}/edit`}
+                      className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm"
+                    >
+                      編集
+                    </Link>
+                    <Link
+                      href="/activities"
+                      className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm"
+                    >
+                      一覧に戻る
+                    </Link>
+                  </div>
+                </div>
+
+                {/* 活動詳細 */}
+                <div className="px-6 py-4">
+                  <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">開始日時</dt>
+                      <dd className="mt-1 text-sm text-gray-900 dark:text-white">
+                        {formatDateTime(activity.startedAt)}
+                      </dd>
+                    </div>
+                    {activity.finishedAt && (
+                      <div>
+                        <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">終了日時</dt>
+                        <dd className="mt-1 text-sm text-gray-900 dark:text-white">
+                          {formatDateTime(activity.finishedAt)}
+                        </dd>
+                      </div>
+                    )}
+                    {activity.place && (
+                      <div>
+                        <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">場所</dt>
+                        <dd className="mt-1 text-sm text-gray-900 dark:text-white">{activity.place.name}</dd>
+                      </div>
+                    )}
+                    <div>
+                      <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">対象グループ</dt>
+                      <dd className="mt-1 text-sm text-gray-900 dark:text-white">
+                        {activity.groups.length > 0
+                          ? activity.groups.map(g => g.group.name).join(', ')
+                          : 'なし'
+                        }
+                      </dd>
+                    </div>
+                  </dl>
+
+                  {activity.description && (
+                    <div className="mt-6">
+                      <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">説明</dt>
+                      <dd className="text-sm text-gray-900 dark:text-white whitespace-pre-wrap">
+                        {activity.description}
+                      </dd>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* 参加者リスト */}
+              <div className="bg-white dark:bg-gray-800 shadow rounded-lg">
+                <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                    参加者 ({activity.participants.length}人)
+                  </h3>
+                  <Link
+                    href={`/activities/${activity.id}/participants`}
+                    className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 text-sm"
+                  >
+                    参加者管理
+                  </Link>
+                </div>
+
+                <div className="px-6 py-4">
+                  {activity.participants.length === 0 ? (
+                    <p className="text-gray-500 dark:text-gray-400 text-center py-8">参加者がいません</p>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead className="bg-gray-50 dark:bg-gray-900">
+                          <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                              名前
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                              メールアドレス
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                              参加状況
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                              参加日時
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                          {activity.participants.map((participant) => (
+                            <tr key={participant.id}>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                                {participant.user.name}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                {participant.user.email}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                {getParticipantStatusBadge(participant.status)}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                {formatDateTime(participant.joinedAt)}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </Layout>
+  )
+}

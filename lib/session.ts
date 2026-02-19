@@ -1,4 +1,3 @@
-import { auth } from "@/app/auth";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
@@ -7,33 +6,25 @@ export async function getSession(): Promise<any> {
   let session: any = undefined;
 
   try {
-    session = await auth();
-  } catch (e) {
-    console.error("auth() error", e);
-  }
-
-  if (!session) {
-    try {
-      const cookieStore = await cookies();
-      const token = cookieStore.get("next-auth.session-token")?.value;
-      if (token) {
-        const dbSession = await prisma.session.findUnique({
-          where: { sessionToken: token },
-          include: { user: true },
-        });
-        if (dbSession && dbSession.expires > new Date()) {
-          session = {
-            user: {
-              id: dbSession.user.id,
-              name: dbSession.user.name,
-              email: dbSession.user.email,
-            },
-          };
-        }
+    const cookieStore = await cookies();
+    const token = cookieStore.get("next-auth.session-token")?.value;
+    if (token) {
+      const dbSession = await prisma.session.findUnique({
+        where: { sessionToken: token },
+        include: { user: true },
+      });
+      if (dbSession && dbSession.expires > new Date()) {
+        session = {
+          user: {
+            id: dbSession.user.id,
+            name: dbSession.user.name,
+            email: dbSession.user.email,
+          },
+        };
       }
-    } catch (e) {
-      console.error("session fallback error", e);
     }
+  } catch (e) {
+    console.error("session error", e);
   }
 
   return session;
@@ -51,7 +42,6 @@ type SessionWithUser = {
     uid: string
     email?: string | null
     name?: string | null
-    image?: string | null
   }
 }
 

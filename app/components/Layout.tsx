@@ -36,7 +36,6 @@ const Layout: React.FC<LayoutProps> = ({ children, session, headerTitle }) => {
             title="活動管理"
             description="活動の計画と参加者管理"
             href="/activities"
-            disabled
           />
         </nav>
       </aside>

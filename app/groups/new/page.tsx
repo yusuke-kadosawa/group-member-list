@@ -1,33 +1,11 @@
-import auth from "@/app/auth"
+import { getSession } from "@/lib/session"
 import { redirect } from "next/navigation"
-import { cookies } from "next/headers"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import GroupForm from "@/app/components/GroupForm"
 
 export default async function NewGroupPage() {
-  let session: any = undefined
-  if (typeof auth === 'function') {
-    session = await auth()
-  }
-
-  if (!session) {
-    try {
-      const cookieStore = await cookies()
-      const token = cookieStore.get("next-auth.session-token")?.value
-      if (token) {
-        const dbSession = await prisma.session.findUnique({
-          where: { sessionToken: token },
-          include: { user: true },
-        })
-        if (dbSession && dbSession.expires > new Date()) {
-          session = { user: { id: dbSession.user.id, name: dbSession.user.name, email: dbSession.user.email } }
-        }
-      }
-    } catch (e) {
-      console.error('session fallback error', e)
-    }
-  }
+  const session = await getSession()
 
   if (!session) {
     redirect("/")
