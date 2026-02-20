@@ -1,5 +1,4 @@
 import { requireAuth } from "@/lib/auth"
-import { cookies } from "next/headers"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import GroupList from "@/app/components/GroupList"
@@ -40,10 +39,6 @@ export default async function GroupsPage() {
     memberCount: memberCountMap.get(group.id) || 0,
   }))
 
-  // 表示モードをcookieから取得（デフォルトはカード）
-  const cookieStore = await cookies()
-  const viewMode = (cookieStore.get("groupViewMode")?.value as 'card' | 'list') || 'card'
-
   const renderDur = Date.now() - renderStart;
   console.log(`[groups] render for ${session.user?.email || 'unknown'} completed in ${renderDur}ms`);
 
@@ -60,7 +55,7 @@ export default async function GroupsPage() {
           新規作成
         </Link>
       </div>
-      <GroupList groups={groupsWithMembers} initialViewMode={viewMode} />
+      <GroupList groups={groupsWithMembers} />
     </Layout>
   )
 }
