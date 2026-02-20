@@ -4,11 +4,7 @@ import Layout from "../components/Layout"
 import UserList from "../components/UserList"
 
 export default async function UsersPage() {
-  const session = await getSession()
-
-  if (!session) {
-    redirect("/")
-  }
+  const session = await requireAuth()
 
   const users = await prisma.user.findMany({
     orderBy: {

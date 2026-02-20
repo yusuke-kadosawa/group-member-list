@@ -6,11 +6,7 @@ import GroupList from "@/app/components/GroupList"
 import Layout from "../components/Layout"
 
 export default async function GroupsPage() {
-  const session = await getSession()
-
-  if (!session) {
-    redirect("/")
-  }
+  const session = await requireAuth()
 
   const renderStart = Date.now();
 

@@ -3,11 +3,7 @@ import Layout from "../components/Layout"
 import ActivityList from "../components/ActivityList"
 
 export default async function ActivitiesPage() {
-  const session = await getSession()
-
-  if (!session) {
-    redirect("/")
-  }
+  const session = await requireAuth()
 
   return (
     <Layout session={session} headerTitle="活動管理">
