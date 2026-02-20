@@ -22,7 +22,6 @@ interface Activity {
   description: string | null
   startedAt: string
   finishedAt: string | null
-  status: 'draft' | 'published' | 'cancelled' | 'completed'
   placeId: number | null
   groups: { id: number; name: string }[]
 }
@@ -35,7 +34,6 @@ export default function EditActivityForm() {
     description: '',
     startedAt: '',
     finishedAt: '',
-    status: 'draft' as 'draft' | 'published' | 'cancelled' | 'completed',
     placeId: '',
     groupIds: [] as number[]
   })
@@ -64,7 +62,6 @@ export default function EditActivityForm() {
           description: activity.description || '',
           startedAt: new Date(activity.startedAt).toISOString().slice(0, 16),
           finishedAt: activity.finishedAt ? new Date(activity.finishedAt).toISOString().slice(0, 16) : '',
-          status: activity.status,
           placeId: activity.placeId?.toString() || '',
           groupIds: activity.groups.map((g: any) => g.id)
         })
@@ -169,38 +166,30 @@ export default function EditActivityForm() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-zinc-50 font-sans flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">読み込み中...</p>
-        </div>
+      <div className="text-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+        <p className="mt-4 text-gray-600">読み込み中...</p>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-zinc-50 font-sans flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">{error}</p>
-          <button
-            onClick={() => router.back()}
-            className="text-blue-500 hover:text-blue-600 underline"
-          >
-            戻る
-          </button>
-        </div>
+      <div className="text-center py-12">
+        <p className="text-red-600 mb-4">{error}</p>
+        <button
+          onClick={() => router.back()}
+          className="text-blue-500 hover:text-blue-600 underline"
+        >
+          戻る
+        </button>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 font-sans">
-      <div className="max-w-2xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="bg-white shadow rounded-lg">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h1 className="text-2xl font-bold text-gray-900">活動編集</h1>
-          </div>
+    <div className="max-w-2xl mx-auto">
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg">
 
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
             {/* 活動名 */}
@@ -232,25 +221,6 @@ export default function EditActivityForm() {
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 placeholder="活動の詳細説明"
               />
-            </div>
-
-            {/* ステータス */}
-            <div>
-              <label htmlFor="status" className="block text-sm font-medium text-gray-700">
-                ステータス <span className="text-red-500">*</span>
-              </label>
-              <select
-                id="status"
-                required
-                value={formData.status}
-                onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as any }))}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="draft">下書き</option>
-                <option value="published">公開中</option>
-                <option value="cancelled">キャンセル</option>
-                <option value="completed">完了</option>
-              </select>
             </div>
 
             {/* 開始日時 */}
@@ -354,6 +324,5 @@ export default function EditActivityForm() {
           </form>
         </div>
       </div>
-    </div>
   )
 }

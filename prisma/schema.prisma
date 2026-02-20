@@ -83,10 +83,12 @@ model GroupUser {
 }
 
 model Place {
-  id        Int    @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   name      String
   latitude  Float?
   longitude Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   activities        Activity[]
   activityTemplates ActivityTemplate[]

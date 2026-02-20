@@ -103,14 +103,9 @@ export default function NewActivityForm() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 font-sans">
-      <div className="max-w-2xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="bg-white shadow rounded-lg">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h1 className="text-2xl font-bold text-gray-900">新規活動作成</h1>
-          </div>
-
-          <form onSubmit={handleSubmit} className="p-6 space-y-6">
+    <div className="max-w-2xl mx-auto">
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg">
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
             {/* 活動名 */}
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700">
@@ -234,6 +229,5 @@ export default function NewActivityForm() {
           </form>
         </div>
       </div>
-    </div>
   )
 }

@@ -186,34 +186,29 @@ export default function ParticipantsManagement() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-zinc-50 font-sans flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">読み込み中...</p>
-        </div>
+      <div className="text-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+        <p className="mt-4 text-gray-600">読み込み中...</p>
       </div>
     )
   }
 
   if (error || !activity) {
     return (
-      <div className="min-h-screen bg-zinc-50 font-sans flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">{error || '活動が見つかりません'}</p>
-          <Link
-            href={`/activities/${params.id}`}
-            className="text-blue-500 hover:text-blue-600 underline"
-          >
-            活動詳細に戻る
-          </Link>
-        </div>
+      <div className="text-center py-12">
+        <p className="text-red-600 mb-4">{error || '活動が見つかりません'}</p>
+        <Link
+          href={`/activities/${params.id}`}
+          className="text-blue-500 hover:text-blue-600 underline"
+        >
+          活動詳細に戻る
+        </Link>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 font-sans">
-      <div className="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <div className="max-w-6xl mx-auto">
         {/* ヘッダー */}
         <div className="bg-white shadow rounded-lg mb-6">
           <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
@@ -358,6 +353,5 @@ export default function ParticipantsManagement() {
           </div>
         </div>
       </div>
-    </div>
   )
 }

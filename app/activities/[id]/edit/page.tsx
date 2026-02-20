@@ -1,8 +1,13 @@
 import { requireAuth } from "@/lib/auth"
+import Layout from "@/app/components/Layout"
 import EditActivityForm from "./EditActivityForm"
 
 export default async function EditActivityPage() {
   const session = await requireAuth()
-  
-  return <EditActivityForm />
+
+  return (
+    <Layout session={session} headerTitle="活動編集">
+      <EditActivityForm />
+    </Layout>
+  )
 }
