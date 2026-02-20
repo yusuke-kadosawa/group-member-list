@@ -1,5 +1,5 @@
-import { getSession } from "@/lib/session"
-import { redirect, notFound } from "next/navigation"
+import { requireAuth } from "@/lib/auth"
+import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import Layout from "../../components/Layout"
 import Link from "next/link"
@@ -49,11 +49,7 @@ const formatDateTime = (date: Date) => {
 }
 
 export default async function ActivityDetailPage({ params }: PageProps) {
-  const session = await getSession()
-
-  if (!session) {
-    redirect("/")
-  }
+  const session = await requireAuth()
 
   const { id } = await params
   const activityId = parseInt(id, 10)

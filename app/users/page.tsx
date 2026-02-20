@@ -1,5 +1,4 @@
-import { getSession } from "@/lib/session"
-import { redirect } from "next/navigation"
+import { requireAuth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import Layout from "../components/Layout"
 import UserList from "../components/UserList"

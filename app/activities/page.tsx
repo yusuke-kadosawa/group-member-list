@@ -1,5 +1,4 @@
-import { getSession } from "@/lib/session"
-import { redirect } from "next/navigation"
+import { requireAuth } from "@/lib/auth"
 import Layout from "../components/Layout"
 import ActivityList from "../components/ActivityList"
 

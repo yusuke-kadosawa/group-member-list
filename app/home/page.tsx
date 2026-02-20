@@ -1,6 +1,5 @@
-import { getSession } from "@/lib/session"
+import { requireAuth } from "@/lib/auth"
 import LogoutButton from "@/app/components/LogoutButton"
-import { redirect } from "next/navigation"
 import { cookies } from "next/headers"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
@@ -13,12 +12,12 @@ export default async function Home() {
   let session: any = undefined
   
   try {
-    session = await getSession()
+    session = await requireAuth()
   } catch (e) {
-    console.error('getSession error', e)
+    console.error('requireAuth error', e)
   }
 
-  // フォールバック: auth() がセッションを返さない場合、cookie を直接参照して DB の sessions を確認
+  // フォールバック: requireAuth() がセッションを返さない場合、cookie を直接参照して DB の sessions を確認
   if (!session) {
     try {
       const cookieStore = await cookies();

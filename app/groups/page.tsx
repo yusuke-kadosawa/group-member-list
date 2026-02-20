@@ -1,5 +1,4 @@
-import { getSession } from "@/lib/session"
-import { redirect } from "next/navigation"
+import { requireAuth } from "@/lib/auth"
 import { cookies } from "next/headers"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"

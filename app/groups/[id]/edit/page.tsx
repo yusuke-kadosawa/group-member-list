@@ -1,5 +1,5 @@
-import { getSession } from "@/lib/session"
-import { redirect, notFound } from "next/navigation"
+import { requireAuth } from "@/lib/auth"
+import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import GroupForm from "@/app/components/GroupForm"
@@ -20,11 +20,7 @@ export default async function EditGroupPage({ params }: { params: Promise<{ id: 
     notFound();
   }
 
-  const session = await getSession()
-
-  if (!session) {
-    redirect("/")
-  }
+  const session = await requireAuth()
 
   return (
     <div className="min-h-screen bg-zinc-50 font-sans dark:bg-black">
