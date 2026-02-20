@@ -1,11 +1,12 @@
 import React from "react"
+import Link from "next/link"
 import NavigationItem from "./NavigationItem"
 import LogoutButton from "./LogoutButton"
 
 interface LayoutProps {
   children: React.ReactNode
   session: any
-  headerTitle?: string // ヘッダーのタイトルを受け取るプロパティを追加
+  headerTitle?: string
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, session, headerTitle }) => {
@@ -44,7 +45,7 @@ const Layout: React.FC<LayoutProps> = ({ children, session, headerTitle }) => {
           />
         </nav>
       </aside>
-      <main className="flex-1">
+      <main className="flex-1 bg-zinc-50 dark:bg-black">
         {headerTitle && (
           <header className="bg-white dark:bg-gray-900 shadow">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -62,7 +63,9 @@ const Layout: React.FC<LayoutProps> = ({ children, session, headerTitle }) => {
             </div>
           </header>
         )}
-        {children}
+        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+          {children}
+        </div>
       </main>
     </div>
   )

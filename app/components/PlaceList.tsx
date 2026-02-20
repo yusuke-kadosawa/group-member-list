@@ -12,19 +12,7 @@ type PlaceListProps = {
 
 export default function PlaceList({ places }: PlaceListProps) {
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-          場所一覧
-        </h2>
-        <Link
-          href="/places/new"
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-        >
-          新規作成
-        </Link>
-      </div>
-
+    <>
       {places.length === 0 ? (
         <div className="text-center py-12 text-gray-500 dark:text-gray-400">
           場所が登録されていません
@@ -54,6 +42,6 @@ export default function PlaceList({ places }: PlaceListProps) {
           ))}
         </div>
       )}
-    </div>
+    </>
   )
 }

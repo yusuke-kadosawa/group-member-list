@@ -29,11 +29,7 @@ export default function GroupList({ groups, initialViewMode }: GroupListProps) {
   return (
     <div>
       {/* 表示切替ボタン */}
-      <div className="mb-6 flex items-center justify-between">
-        <Link href="/groups/new" className="inline-block px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">
-          + 新規グループ作成
-        </Link>
-
+      <div className="mb-6 flex justify-end">
         <div className="flex gap-2 bg-white dark:bg-gray-800 rounded-md shadow p-1">
           <button
             onClick={() => setViewMode('card')}

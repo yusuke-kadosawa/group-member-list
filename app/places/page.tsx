@@ -1,5 +1,6 @@
 import { requireAuth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import Link from "next/link"
 import PlaceList from "@/app/components/PlaceList"
 import Layout from "../components/Layout"
 
@@ -19,14 +20,19 @@ export default async function PlacesPage() {
   console.log(`[places] render for ${session.user?.email || 'unknown'} completed in ${renderDur}ms`)
 
   return (
-    <Layout session={session} headerTitle="場所一覧">
-      <div className="min-h-screen bg-zinc-50 font-sans dark:bg-black">
-        <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
-            <PlaceList places={places} />
-          </div>
-        </main>
+    <Layout
+      session={session}
+      headerTitle="場所管理"
+    >
+      <div className="flex justify-end mb-6">
+        <Link
+          href="/places/new"
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          新規作成
+        </Link>
       </div>
+      <PlaceList places={places} />
     </Layout>
   )
 }

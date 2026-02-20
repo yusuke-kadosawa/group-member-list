@@ -50,12 +50,11 @@ export default function NewActivityForm() {
 
   const fetchPlaces = async () => {
     try {
-      // Places API が実装されていないので、仮のデータを設定
-      setPlaces([
-        { id: 1, name: '会議室A', latitude: null, longitude: null },
-        { id: 2, name: '会議室B', latitude: null, longitude: null },
-        { id: 3, name: 'オンライン', latitude: null, longitude: null }
-      ])
+      const response = await fetch('/api/places')
+      if (response.ok) {
+        const data = await response.json()
+        setPlaces(data.places || [])
+      }
     } catch (error) {
       console.error('Error fetching places:', error)
     }
