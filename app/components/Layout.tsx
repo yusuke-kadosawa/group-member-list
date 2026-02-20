@@ -33,6 +33,11 @@ const Layout: React.FC<LayoutProps> = ({ children, session, headerTitle }) => {
             href="/users"
           />
           <NavigationItem
+            title="場所管理"
+            description="活動場所の登録と管理"
+            href="/places"
+          />
+          <NavigationItem
             title="活動管理"
             description="活動の計画と参加者管理"
             href="/activities"
