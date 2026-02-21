@@ -35,6 +35,20 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
+## Documentation
+
+### Development Process
+このプロジェクトで使用している開発プロセスのドキュメントです。他のプロジェクトでも使える汎用的なテンプレートとして公開しています。
+
+- **[開発プロセス概要](specifications/development-process-executive-summary.md)** - 中学生でもわかる！プロジェクト全体の流れ（1ページ版）
+- **[標準開発プロセス](specifications/standard-development-process.md)** - プロジェクト計画からリリースまでの完全ガイド
+- **[プロジェクト計画テンプレート](specifications/project-planning-template.md)** - プロジェクト開始時のチェックリスト
+
+### Middleware
+- [ミドルウェア起動条件](specifications/middleware-activation-conditions.md) - Next.js ミドルウェアの動作条件
+
+---
+
 ## Authentication Design Overview
 
 ### Current Implementation
