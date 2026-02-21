@@ -40,7 +40,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ### Development Process
 このプロジェクトで使用している開発プロセスのドキュメントです。他のプロジェクトでも使える汎用的なテンプレートとして公開しています。
 
-- **[開発プロセス概要](specifications/development-process-executive-summary.md)** - 中学生でもわかる！プロジェクト全体の流れ（1ページ版）
+- **[開発プロセス概要](specifications/process-overview.md)** - 中学生でもわかる！プロジェクト全体の流れ（1ページ版）
 - **[標準開発プロセス](specifications/standard-development-process.md)** - プロジェクト計画からリリースまでの完全ガイド
 - **[プロジェクト計画テンプレート](specifications/project-planning-template.md)** - プロジェクト開始時のチェックリスト
 

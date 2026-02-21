@@ -1,6 +1,6 @@
 # 開発プロセス概要
 
-> **この資料の目的**: プロジェクト全体の流れを1枚で理解する
+> **この1ページでわかること**: プロジェクト全体の流れ
 
 ## プロセス全体像（約8週間）
 
@@ -114,4 +114,4 @@ graph TB
 
 ---
 
-**詳細資料**: [標準開発プロセス完全版](standard-development-process.md) | [プロジェクト計画テンプレート](project-planning-template.md)
+**関連ドキュメント**: [標準開発プロセス完全版](standard-development-process.md) | [プロジェクト計画テンプレート](project-planning-template.md)
