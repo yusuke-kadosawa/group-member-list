@@ -49,15 +49,15 @@ export async function POST(req: Request) {
 
     const token = randomUUID()
     const expires = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
-    
+
     // Delete any existing verification tokens for this email
     await prisma.verificationToken.deleteMany({ where: { identifier: email } })
-    
+
     console.log('Creating token:', token, 'expires:', expires.toISOString(), 'current time:', new Date().toISOString())
     await prisma.verificationToken.create({ data: { identifier: email, token, expires } })
 
     // Send email with verification URL
-    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+    const baseUrl = process.env.APP_URL || 'http://localhost:3000'
     const verificationUrl = `${baseUrl}/auth/verify?token=${token}`
     const { subject, html } = createVerificationEmailContent(verificationUrl)
     await sendEmail({ to: email, subject, html })

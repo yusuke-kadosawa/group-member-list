@@ -1,8 +1,3 @@
-# Group Member List
-
-Next.js で構築されたグループメンバー管理アプリケーションです。
-
-<!-- BEGIN tech-stack.md -->
 # 技術スタック
 
 ## 採用技術
@@ -112,22 +107,3 @@ npm run test:e2e
 # Prisma Studio（データベースGUI）
 npx prisma studio
 ```
-<!-- END tech-stack.md -->
-
-## 参考リンク
-
-- [Next.js ドキュメント](https://nextjs.org/docs) - Next.js の機能と API
-- [Prisma ドキュメント](https://www.prisma.io/docs) - Prismaの使い方
-- [PostgreSQL ドキュメント](https://www.postgresql.org/docs/) - PostgreSQLリファレンス
-- [Tailwind CSS](https://tailwindcss.com/docs) - スタイリングガイド
-- [Vercel デプロイ](https://vercel.com/docs) - 本番環境へのデプロイ方法
-
----
-
-## 開発プロセスドキュメント
-
-このプロジェクトで使用している開発プロセスのドキュメントです。他のプロジェクトでも使える汎用的なテンプレートとして公開しています。
-
-- **[開発プロセス概要](specifications/process-overview.md)** - プロジェクト全体の流れ（1ページ版）
-- **[標準開発プロセス](specifications/standard-development-process.md)** - プロジェクト計画からリリースまでの完全ガイド
-- **[プロジェクト計画テンプレート](specifications/project-planning-template.md)** - プロジェクト開始時のチェックリスト
