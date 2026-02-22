@@ -2,108 +2,73 @@
 
 ## 採用技術
 
-- **フロントエンド**: Next.js 15 (App Router), TypeScript, Tailwind CSS, Headless UI
-- **バックエンド**: Next.js API Routes, Prisma ORM
-- **データベース**: PostgreSQL
-- **デプロイ**: Vercel (Serverless)
-- **認証**: メールベース認証（独自実装、セッションはHttpOnly Cookie）
-- **開発ツール**: Git, GitHub, npm, ESLint, Prettier
-- **テスト**: Jest, Playwright
+### フロントエンド
+- **フレームワーク**: Next.js 15 (App Router)
+- **言語**: TypeScript
+- **スタイリング**: Tailwind CSS
+- **UIコンポーネント**: React Server Components + Client Components
 
-## 開発環境のセットアップ
+### バックエンド
+- **ランタイム**: Next.js API Routes
+- **言語**: TypeScript
+- **ORM**: Prisma
 
-### 前提条件
+### データベース
+- **開発環境**: PostgreSQL (local)
+- **本番環境**: Vercel Postgres
 
-- Node.js 18以上
-- PostgreSQL 14以上
-- Git
+### デプロイメント
+- **プラットフォーム**: Vercel
+- **ドメイン**: group-member-list.vercel.app
+- **デプロイ戦略**:
+  - **Production環境**:
+    - ブランチ: `main`
+    - URL: `group-member-list.vercel.app`
+    - トリガー: mainブランチへのPush後、手動承認
+    - 承認: Vercel Production Deployment Approval必須
+  - **Preview環境**:
+    - 説明: Pull Request / feature branch毎に自動生成
+    - URL: PR毎に一意のURL自動生成
+    - トリガー: Pull Request作成時
+  - **ワークフロー**:
+    1. Feature branchで開発
+    2. Pull Request作成（Preview環境自動生成）
+    3. Preview環境で動作確認・レビュー
+    4. PRマージ（mainブランチへPush、Production環境デプロイ待機）
+    5. Vercelで手動承認→Production環境へデプロイ
+  - **承認**:
+    - Pull Requestレビュー必須（GitHub）
+    - Production Deployment Approval必須（Vercel）
 
-### 1. リポジトリのクローン
+### メール送信
+- **開発環境**:
+  - サービス: MailDev
+  - ホスト: localhost
+  - ポート: 1025
+  - Webインターフェース: http://localhost:1080
+- **本番環境**:
+  - ステータス: 未決定（サービス選定が必要）
+  - 候補:
+    - **Resend**: 開発者フレンドリーAPI、無料枠あり
+    - **SendGrid**: 実績豊富、充実した機能
+    - **Amazon SES**: 低コスト、AWS統合
+  - 要件:
+    - 信頼性の高い配送
+    - SPF/DKIM/DMARC対応
+    - 配送ステータス追跡
+    - リトライ機能
 
-```bash
-git clone <repository-url>
-cd group-member-list
-```
+### 開発ツール
+- **バージョン管理**: Git, GitHub
+- **パッケージマネージャー**: npm
+- **リンター**: ESLint
+- **フォーマッター**: Prettier
+- **メールテスト**: MailDev
+- **テスティング**: Jest, Playwright
 
-### 2. 依存関係のインストール
+## アーキテクチャ
 
-```bash
-npm install
-```
-
-### 3. 環境変数の設定
-
-`.env.local` ファイルを作成し、必要な環境変数を設定：
-
-```bash
-# データベース接続
-DATABASE_URL="postgresql://user:password@localhost:5432/group_member_list"
-
-# アプリケーション設定
-APP_URL="http://localhost:3000"  # 認証メールのリンク生成に使用
-
-# メール送信（開発環境）
-EMAIL_FROM="noreply@example.com"
-EMAIL_SERVER_HOST="localhost"
-EMAIL_SERVER_PORT="1025"
-```
-
-### 4. データベースのセットアップ
-
-```bash
-# データベース作成
-createdb group_member_list
-
-# マイグレーション実行
-npx prisma migrate dev
-
-# Prisma Client生成
-npx prisma generate
-```
-
-### 5. 開発サーバーの起動
-
-```bash
-npm run dev
-```
-
-ブラウザで [http://localhost:3000](http://localhost:3000) を開いて確認できます。
-
-### 6. メール送信のテスト（開発環境）
-
-開発環境ではMailDevを使用してメールをテストします：
-
-```bash
-# MailDevの起動
-maildev
-```
-
-MailDevのWebインターフェース: [http://localhost:1080](http://localhost:1080)
-
-## 主要なコマンド
-
-```bash
-# 開発サーバー起動
-npm run dev
-
-# ビルド
-npm run build
-
-# 本番モードで起動
-npm start
-
-# リンターチェック
-npm run lint
-
-# フォーマット
-npm run format
-
-# テスト実行
-npm test
-
-# E2Eテスト
-npm run test:e2e
-
-# Prisma Studio（データベースGUI）
-npx prisma studio
-```
+- **パターン**: Server-Side Rendering (SSR) + API Routes
+- **認証**: メールベースマジックリンク（独自実装）
+- **セッション管理**: Database (Session table)
+- **状態管理**: React Server Components（サーバー側状態管理）

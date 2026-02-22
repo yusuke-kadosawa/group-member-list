@@ -19,7 +19,7 @@ Next.js で構築されたグループメンバー管理アプリケーション
 
 ### 前提条件
 
-- Node.js 18以上
+- Node.js 20以上（LTS推奨）
 - PostgreSQL 14以上
 - Git
 
