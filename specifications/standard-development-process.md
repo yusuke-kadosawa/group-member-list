@@ -20,16 +20,16 @@ graph TB
     Release --> Monitor[監視・運用]
     Monitor --> End([運用継続])
 
-    style Start fill:#e1f5e1
-    style Planning fill:#e8f4f8
-    style Requirements fill:#fff3cd
-    style Design fill:#fff3cd
-    style Implementation fill:#cfe2ff
-    style Testing fill:#cfe2ff
-    style Staging fill:#f8d7da
-    style Production fill:#d1ecf1
-    style Release fill:#d1ecf1
-    style End fill:#e1f5e1
+    style Start fill:#e1f5e1,color:#000
+    style Planning fill:#e8f4f8,color:#000
+    style Requirements fill:#fff3cd,color:#000
+    style Design fill:#fff3cd,color:#000
+    style Implementation fill:#cfe2ff,color:#000
+    style Testing fill:#cfe2ff,color:#000
+    style Staging fill:#f8d7da,color:#000
+    style Production fill:#d1ecf1,color:#000
+    style Release fill:#d1ecf1,color:#000
+    style End fill:#e1f5e1,color:#000
 ```
 
 ## 2. フェーズ別詳細フロー
@@ -47,7 +47,7 @@ graph LR
     G -->|NG| C
     G -->|OK| H[計画確定・キックオフ]
 
-    style H fill:#d1ecf1
+    style H fill:#d1ecf1,color:#000
 ```
 
 **成果物：**
@@ -75,7 +75,7 @@ graph LR
     F -->|NG| A
     F -->|OK| G[要件確定]
 
-    style G fill:#d1ecf1
+    style G fill:#d1ecf1,color:#000
 ```
 
 **成果物：**

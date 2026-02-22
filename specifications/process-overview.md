@@ -11,12 +11,12 @@ graph LR
     P -.-> K1[キックオフ]
     L -.-> K2[リリース]
 
-    style P fill:#e8f4f8
-    style R fill:#fff3cd
-    style D fill:#fff3cd
-    style I fill:#cfe2ff
-    style T fill:#cfe2ff
-    style L fill:#d1ecf1
+    style P fill:#e8f4f8,color:#000
+    style R fill:#fff3cd,color:#000
+    style D fill:#fff3cd,color:#000
+    style I fill:#cfe2ff,color:#000
+    style T fill:#cfe2ff,color:#000
+    style L fill:#d1ecf1,color:#000
 ```
 
 ## フェーズ別サマリー
