@@ -1,6 +1,15 @@
 import LoginForm from '@/app/components/LoginForm';
+import { getSession } from '@/lib/session';
+import { redirect } from 'next/navigation';
 
-export default function Home() {
+export default async function Home() {
+  // セッションチェック: 認証済みなら /home にリダイレクト
+  const session = await getSession();
+  if (session) {
+    redirect('/home');
+  }
+
+  // 未認証: ログインフォームを表示
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex flex-col items-center justify-center py-32 px-16 bg-white dark:bg-black">
