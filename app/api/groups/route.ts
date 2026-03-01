@@ -25,6 +25,11 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   const start = Date.now()
   try {
+    // 認証ユーザー取得
+    const { requireAuth } = await import("@/lib/auth")
+    const session = await requireAuth()
+    const userId = session?.user?.id
+
     const body = await request.json()
     const { name, description } = body
 
@@ -32,12 +37,32 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'name required' }, { status: 400 })
     }
 
-    const group = await prisma.group.create({
-      data: {
-        name,
-        description: description || null,
-      },
-    })
+    // グループ作成→オーナー登録をawaitで順次処理
+    let group = null;
+    if (userId) {
+      await prisma.$transaction(async (tx) => {
+        group = await tx.group.create({
+          data: {
+            name,
+            description: description || null,
+          },
+        });
+        await tx.groupUser.create({
+          data: {
+            userId,
+            groupId: group.id,
+            role: 3, // OWNER=3（設計仕様）
+          },
+        });
+      });
+    } else {
+      group = await prisma.group.create({
+        data: {
+          name,
+          description: description || null,
+        },
+      });
+    }
 
     const duration = Date.now() - start
     console.log(`[groups] POST completed in ${duration}ms`)
