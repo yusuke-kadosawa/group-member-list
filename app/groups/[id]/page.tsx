@@ -36,13 +36,13 @@ export default async function GroupDetailPage({ params }: Props) {
     notFound();
   }
 
-  // 権限判定
+  // 権限判定（role:3=OWNER, 2=ADMIN, 1=MEMBER, 0=GUEST）
   const myRole = group.groupUsers.find((u: GroupUser) => u.userId === user?.id)?.role;
-  const isOwner = myRole === 'OWNER';
-  const isAdmin = myRole === 'ADMIN';
+  const isOwner = myRole === 3;
+  const isAdmin = myRole === 2;
   const isPublic = group.type === 'PUBLIC';
 
-  if (!isPublic && !myRole) {
+  if (!isPublic && myRole === undefined) {
     return (
       <Layout session={user} headerTitle="グループ詳細">
         <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow">

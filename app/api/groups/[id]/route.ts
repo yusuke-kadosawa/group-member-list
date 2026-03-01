@@ -13,17 +13,48 @@ export async function GET(
       return NextResponse.json({ error: 'invalid id' }, { status: 400 })
     }
 
+    // グループ詳細＋メンバー・オーナー情報を含めて返却
     const group = await prisma.group.findUnique({
       where: { id: groupId },
+      include: {
+        groupUsers: {
+          select: {
+            userId: true,
+            role: true,
+            user: { select: { name: true } },
+          },
+        },
+      },
     })
 
     if (!group) {
       return NextResponse.json({ error: 'group not found' }, { status: 404 })
     }
 
+    // オーナー情報抽出（role:3）
+    const ownerUser = group.groupUsers.find((u: any) => u.role === 3)
+    const owner = ownerUser ? { name: ownerUser.user?.name ?? '' } : { name: '' }
+
+    // groupUsers配列をAPIレスポンス用に整形
+    const groupUsers = group.groupUsers.map((u: any) => ({
+      userId: u.userId,
+      role: u.role,
+      name: u.user?.name ?? '',
+    }))
+
     const duration = Date.now() - start
     console.log(`[groups/${id}] GET completed in ${duration}ms`)
-    return NextResponse.json({ group })
+    return NextResponse.json({
+      group: {
+        id: group.id,
+        name: group.name,
+        description: group.description,
+        type: group.type ?? 'PUBLIC',
+        joinType: group.joinType ?? 'FREE',
+        groupUsers,
+        owner,
+      }
+    })
   } catch (e) {
     console.error(`/api/groups/${id} GET error`, e)
     const duration = Date.now() - start
