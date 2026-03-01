@@ -4,14 +4,8 @@ import GroupMembersTab from './GroupMembersTab';
 import GroupActivitiesTab from './GroupActivitiesTab';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
-
-// ダミーTabs/Tabコンポーネント（本番はUIライブラリ等で置換）
-function Tabs({ children }: { children: React.ReactNode }) {
-  return <div>{children}</div>;
-}
-function Tab({ label, children }: { label: string; children: React.ReactNode }) {
-  return <section><h2>{label}</h2>{children}</section>;
-}
+import Layout from '../../components/Layout';
+import Link from 'next/link';
 
 interface GroupUser {
   userId: number;
@@ -33,7 +27,8 @@ interface Props {
 }
 
 export default async function GroupDetailPage({ params }: Props) {
-  const groupId = Number(params.id);
+  const { id } = await params;
+  const groupId = Number(id);
   const user = await requireAuth();
   const group = await getGroupDetail(groupId);
 
@@ -49,44 +44,61 @@ export default async function GroupDetailPage({ params }: Props) {
 
   if (!isPublic && !myRole) {
     return (
-      <div className="error">
-        <h2>このグループは非公開です</h2>
-        <a href="/groups">グループ一覧に戻る</a>
-      </div>
+      <Layout session={user} headerTitle="グループ詳細">
+        <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow">
+          <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">このグループは非公開です</h2>
+          <Link href="/groups" className="text-blue-600 dark:text-blue-400 hover:underline">グループ一覧に戻る</Link>
+        </div>
+      </Layout>
     );
   }
 
   return (
-    <main>
-      <h1>{group.name}</h1>
-      <p>{group.description}</p>
-      <div>
-        <span>タイプ: {group.type === 'PUBLIC' ? '公開' : '非公開'}</span>
-        <span>参加方法: {group.joinType === 'FREE' ? '自由参加' : '承認制'}</span>
-        <span>メンバー数: {group.groupUsers.length}</span>
-        <span>オーナー: {group.owner?.name}</span>
-        <span>自分のロール: {myRole ?? '未参加'}</span>
+    <Layout session={user} headerTitle="グループ詳細">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{group.name}</h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-2">{group.description}</p>
+            <div className="flex flex-wrap gap-4 text-sm">
+              <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">タイプ: {group.type === 'PUBLIC' ? '公開' : '非公開'}</span>
+              <span className="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded">参加方法: {group.joinType === 'FREE' ? '自由参加' : '承認制'}</span>
+              <span className="px-2 py-1 bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 rounded">メンバー数: {group.groupUsers.length}</span>
+              <span className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded">オーナー: {group.owner?.name}</span>
+              <span className="px-2 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded">自分のロール: {myRole ?? '未参加'}</span>
+            </div>
+          </div>
+          <div className="flex gap-2 mt-4 md:mt-0">
+            {(isOwner || isAdmin) && (
+              <Link href={`/groups/${groupId}/edit`} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">編集</Link>
+            )}
+            {isOwner && (
+              <button className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">削除</button>
+            )}
+            {!myRole && isPublic && group.joinType === 'FREE' && (
+              <button className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">グループに参加</button>
+            )}
+            {!myRole && isPublic && group.joinType === 'APPROVAL' && (
+              <button className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">参加リクエストを送信</button>
+            )}
+          </div>
+        </div>
       </div>
-      <div>
-        {(isOwner || isAdmin) && <button>編集</button>}
-        {isOwner && <button>削除</button>}
-        {!myRole && isPublic && group.joinType === 'FREE' && <button>グループに参加</button>}
-        {!myRole && isPublic && group.joinType === 'APPROVAL' && <button>参加リクエストを送信</button>}
-      </div>
-      <hr />
-      <Tabs>
-        <Tab label="メンバー一覧">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <div className="mb-4">
+          <nav className="flex gap-4 border-b pb-2">
+            <button className="px-3 py-1 text-blue-600 dark:text-blue-400 border-b-2 border-blue-500 font-semibold">メンバー一覧</button>
+            <button className="px-3 py-1 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">活動一覧</button>
+          </nav>
+        </div>
+        <div>
           <Suspense fallback={<div>Loading...</div>}>
             <GroupMembersTab groupId={groupId} />
           </Suspense>
-        </Tab>
-        <Tab label="活動一覧">
-          <Suspense fallback={<div>Loading...</div>}>
-            <GroupActivitiesTab groupId={groupId} />
-          </Suspense>
-        </Tab>
-      </Tabs>
-    </main>
+        </div>
+        {/* 活動一覧タブはUI拡張時に切り替え実装 */}
+      </div>
+    </Layout>
   );
 }
 

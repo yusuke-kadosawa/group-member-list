@@ -17,17 +17,21 @@ export interface Group {
 }
 
 export async function getGroupDetail(id: number): Promise<Group> {
-  // 本来はDBから取得するが、まずはダミーデータ返却
+  const isServer = typeof window === 'undefined';
+  const baseUrl = isServer
+    ? process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+    : '';
+  const res = await fetch(`${baseUrl}/api/groups/${id}`);
+  if (!res.ok) throw new Error('グループ情報の取得に失敗しました');
+  const data = await res.json();
+  const group = data.group;
   return {
-    id,
-    name: 'サンプルグループ',
-    description: '説明サンプル',
-    type: 'PUBLIC',
-    joinType: 'FREE',
-    groupUsers: [
-      { userId: 1, role: 'OWNER' },
-      { userId: 2, role: 'MEMBER' }
-    ],
-    owner: { name: 'オーナー名' },
+    id: group.id,
+    name: group.name,
+    description: group.description,
+    type: group.type,
+    joinType: group.joinType,
+    groupUsers: group.groupUsers ?? [],
+    owner: group.owner ?? { name: '' },
   };
 }
