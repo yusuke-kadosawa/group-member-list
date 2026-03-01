@@ -1,17 +1,17 @@
 // グループ詳細取得APIラッパー（ダミー実装）
 import { prisma } from './prisma';
 
+
 export interface GroupUser {
   userId: number;
-  role: string;
+  role: number;
 }
 
 export interface Group {
   id: number;
   name: string;
   description: string;
-  type: string;
-  joinType: string;
+  // ...existing code...
   groupUsers: GroupUser[];
   owner?: { name: string };
 }
@@ -29,8 +29,6 @@ export async function getGroupDetail(id: number): Promise<Group> {
     id: group.id,
     name: group.name,
     description: group.description,
-    type: group.type,
-    joinType: group.joinType,
     groupUsers: group.groupUsers ?? [],
     owner: group.owner ?? { name: '' },
   };

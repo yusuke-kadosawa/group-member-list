@@ -49,8 +49,6 @@ export async function GET(
         id: group.id,
         name: group.name,
         description: group.description,
-        type: group.type ?? 'PUBLIC',
-        joinType: group.joinType ?? 'FREE',
         groupUsers,
         owner,
       }

@@ -9,15 +9,14 @@ import Link from 'next/link';
 
 interface GroupUser {
   userId: number;
-  role: string;
+  role: number;
 }
 
 interface Group {
   id: number;
   name: string;
   description: string;
-  type: string;
-  joinType: string;
+  // ...existing code...
   groupUsers: GroupUser[];
   owner?: { name: string };
 }
@@ -37,21 +36,22 @@ export default async function GroupDetailPage({ params }: Props) {
   }
 
   // 権限判定（role:3=OWNER, 2=ADMIN, 1=MEMBER, 0=GUEST）
-  const myRole = group.groupUsers.find((u: GroupUser) => u.userId === user?.id)?.role;
+  const myUserId = Number(user?.id);
+  const myRole = group.groupUsers.find((u: GroupUser) => u.userId === myUserId)?.role;
   const isOwner = myRole === 3;
   const isAdmin = myRole === 2;
-  const isPublic = group.type === 'PUBLIC';
 
-  if (!isPublic && myRole === undefined) {
-    return (
-      <Layout session={user} headerTitle="グループ詳細">
-        <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow">
-          <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">このグループは非公開です</h2>
-          <Link href="/groups" className="text-blue-600 dark:text-blue-400 hover:underline">グループ一覧に戻る</Link>
-        </div>
-      </Layout>
-    );
-  }
+  // 参加権限がない場合でも一時的に非公開表示を無効化
+  // if (myRole === undefined) {
+  //   return (
+  //     <Layout session={user} headerTitle="グループ詳細">
+  //       <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow">
+  //         <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">このグループは非公開です</h2>
+  //         <Link href="/groups" className="text-blue-600 dark:text-blue-400 hover:underline">グループ一覧に戻る</Link>
+  //       </div>
+  //     </Layout>
+  //   );
+  // }
 
   return (
     <Layout session={user} headerTitle="グループ詳細">
@@ -61,8 +61,6 @@ export default async function GroupDetailPage({ params }: Props) {
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{group.name}</h2>
             <p className="text-gray-600 dark:text-gray-400 mb-2">{group.description}</p>
             <div className="flex flex-wrap gap-4 text-sm">
-              <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded">タイプ: {group.type === 'PUBLIC' ? '公開' : '非公開'}</span>
-              <span className="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded">参加方法: {group.joinType === 'FREE' ? '自由参加' : '承認制'}</span>
               <span className="px-2 py-1 bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 rounded">メンバー数: {group.groupUsers.length}</span>
               <span className="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded">オーナー: {group.owner?.name}</span>
               <span className="px-2 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded">自分のロール: {myRole ?? '未参加'}</span>
@@ -74,12 +72,6 @@ export default async function GroupDetailPage({ params }: Props) {
             )}
             {isOwner && (
               <button className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">削除</button>
-            )}
-            {!myRole && isPublic && group.joinType === 'FREE' && (
-              <button className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">グループに参加</button>
-            )}
-            {!myRole && isPublic && group.joinType === 'APPROVAL' && (
-              <button className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">参加リクエストを送信</button>
             )}
           </div>
         </div>

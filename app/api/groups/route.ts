@@ -37,23 +37,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'name required' }, { status: 400 })
     }
 
-    // グループ作成→オーナー登録をawaitで順次処理
+    // グループ作成時にgroupUsers（オーナー）を同時に作成
     let group = null;
     if (userId) {
-      await prisma.$transaction(async (tx) => {
-        group = await tx.group.create({
-          data: {
-            name,
-            description: description || null,
+      group = await prisma.group.create({
+        data: {
+          name,
+          description: description || null,
+          groupUsers: {
+            create: [{ userId, role: 3 }],
           },
-        });
-        await tx.groupUser.create({
-          data: {
-            userId,
-            groupId: group.id,
-            role: 3, // OWNER=3（設計仕様）
-          },
-        });
+        },
+        include: {
+          groupUsers: true,
+        },
       });
     } else {
       group = await prisma.group.create({
