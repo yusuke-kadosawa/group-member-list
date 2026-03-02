@@ -43,7 +43,8 @@ export function createMailTransporter() {
 export async function sendEmail(options: {
   to: string | string[]
   subject: string
-  html: string
+  html?: string
+  text?: string
   from?: string
 }) {
   const transporter = createMailTransporter()
@@ -54,6 +55,7 @@ export async function sendEmail(options: {
     to: options.to,
     subject: options.subject,
     html: options.html,
+    text: options.text,
   })
 
   console.log('[sendEmail] Message sent:', info.messageId)

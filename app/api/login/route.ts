@@ -8,32 +8,9 @@ import { sendEmail } from '@/lib/mailer'
  * @param verificationUrl 検証リンクのURL
  */
 function createVerificationEmailContent(verificationUrl: string) {
-  const subject = 'ログインリンク'
-  const html = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="utf-8">
-      <title>ログインリンク</title>
-    </head>
-    <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-      <h1 style="color: #333;">グループメンバーリストにログイン</h1>
-      <p>以下のリンクをクリックしてログインしてください：</p>
-      <p style="margin: 30px 0;">
-        <a href="${verificationUrl}" style="background-color: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
-          ログインする
-        </a>
-      </p>
-      <p>このリンクは1時間以内に有効期限が切れます。</p>
-      <p>※ このメールに心当たりがない場合は無視してください。</p>
-      <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
-      <p style="color: #666; font-size: 12px;">
-        このメールは自動送信されています。返信しないでください。
-      </p>
-    </body>
-    </html>
-  `
-  return { subject, html }
+  const subject = 'グループメンバーリスト ログイン用リンクのお知らせ'
+  const text = `こんにちは！\n\nグループメンバーリストへのログインリクエストを受け付けました。\n\n下記の安全な公式リンクからログインしてください（有効期限: 1時間）:\n${verificationUrl}\n\n※このメールに心当たりがない場合は、何もせず削除してください。\nこのメールは自動送信です。ご不明点は公式サイトからお問い合わせください。\n\nグループメンバーリスト運営チーム`
+  return { subject, text }
 }
 
 export async function POST(req: Request) {
@@ -59,8 +36,8 @@ export async function POST(req: Request) {
     // Send email with verification URL
     const baseUrl = process.env.APP_URL || 'http://localhost:3000'
     const verificationUrl = `${baseUrl}/auth/verify?token=${token}`
-    const { subject, html } = createVerificationEmailContent(verificationUrl)
-    await sendEmail({ to: email, subject, html })
+    const { subject, text } = createVerificationEmailContent(verificationUrl)
+    await sendEmail({ to: email, subject, text })
 
     return NextResponse.json({ ok: true })
   } catch (e) {
