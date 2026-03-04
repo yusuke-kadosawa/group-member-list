@@ -64,6 +64,7 @@ model Group {
 
   groupUsers     GroupUser[]
   activityGroups ActivityGroup[]
+  verificationTokens VerificationToken[]
 
   @@map("groups")
 }
@@ -187,7 +188,10 @@ model Session {
 model VerificationToken {
   identifier String
   token      String   @unique
+  groupId    Int?    // グループ招待用途の場合のみセット
   expires    DateTime
+
+  group      Group?  @relation(fields: [groupId], references: [id])
 
   @@unique([identifier, token])
   @@map("verificationtokens")
