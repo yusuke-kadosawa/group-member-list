@@ -6,6 +6,8 @@ import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 import Layout from '../../components/Layout';
 import Link from 'next/link';
+import InviteModalWrapper from './InviteModalWrapper';
+// Tabs, TabはUIコンポーネントとして別途実装してください。
 
 interface GroupUser {
   userId: number;
@@ -21,22 +23,29 @@ interface Group {
   owner?: { name: string };
 }
 
+
 interface Props {
   params: { id: string };
 }
 
 export default async function GroupDetailPage({ params }: Props) {
-  const { id } = await params;
+  const { id } = params;
   const groupId = Number(id);
   const user = await requireAuth();
   const group = await getGroupDetail(groupId);
+
+  // デバッグ用ログ
+  // console.log('[GroupDetailPage] user:', user);
+  // console.log('[GroupDetailPage] group:', group);
+  // console.log('[GroupDetailPage] groupUsers:', group.groupUsers);
+  const myUserId = Number(user?.user?.id);
+  // console.log('[GroupDetailPage] myUserId:', myUserId);
 
   if (!group) {
     notFound();
   }
 
   // 権限判定（role:3=OWNER, 2=ADMIN, 1=MEMBER, 0=GUEST）
-  const myUserId = Number(user?.id);
   const myRole = group.groupUsers.find((u: GroupUser) => u.userId === myUserId)?.role;
   const isOwner = myRole === 3;
   const isAdmin = myRole === 2;
@@ -54,7 +63,7 @@ export default async function GroupDetailPage({ params }: Props) {
   // }
 
   return (
-    <Layout session={user} headerTitle="グループ詳細">
+    <Layout session={user} headerTitle={`グループ詳細 - ${group.name}`}>
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
           <div>
@@ -71,7 +80,7 @@ export default async function GroupDetailPage({ params }: Props) {
               <Link href={`/groups/${groupId}/edit`} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">編集</Link>
             )}
             {(isOwner || isAdmin) && (
-              <Link href={`/groups/${groupId}/invite`} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">招待</Link>
+              <InviteModalWrapper groupId={groupId} />
             )}
             {isOwner && (
               <button className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">削除</button>

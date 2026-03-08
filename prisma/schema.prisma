@@ -1,3 +1,26 @@
+enum GroupInviteStatus {
+  pending
+  accepted
+  expired
+}
+
+model GroupInvite {
+  id             Int                @id @default(autoincrement())
+  groupId        Int
+  emailId        Int                // 招待メールアドレスID（EmailテーブルのFK）
+  invitedBy      Int                // 招待者ユーザーID
+  invitedAt      DateTime           @default(now())
+  status         GroupInviteStatus  @default(pending)
+  acceptedUserId Int?               // 参加ユーザーID（任意）
+
+  group          Group   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  email          Email   @relation(fields: [emailId], references: [id], onDelete: Cascade)
+  invitedByUser  User    @relation("InvitedByUser", fields: [invitedBy], references: [id], onDelete: Cascade)
+  acceptedUser   User?   @relation("AcceptedUser", fields: [acceptedUserId], references: [id])
+
+  @@unique([groupId, emailId])
+  @@map("group_invites")
+}
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
@@ -28,7 +51,7 @@ model Email {
   createdAt   DateTime  @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  groupInvites   GroupInvite[]
   @@map("emails")
 }
 
@@ -47,6 +70,8 @@ model User {
   emails        Email[]
   groupUsers    GroupUser[]
   activityUsers ActivityUser[]
+  invitedGroupInvites GroupInvite[] @relation("InvitedByUser")
+  acceptedGroupInvites GroupInvite[] @relation("AcceptedUser")
 
   @@map("users")
 }
@@ -63,6 +88,7 @@ model Group {
   children Group[] @relation("GroupHierarchy")
 
   groupUsers     GroupUser[]
+  groupInvites GroupInvite[]
   activityGroups ActivityGroup[]
   verificationTokens VerificationToken[]
 
