@@ -19,6 +19,12 @@ export async function POST(req: Request) {
     const email = typeof body?.email === 'string' ? body.email : null
     if (!email) return NextResponse.json({ error: 'email required' }, { status: 400 })
 
+    // メールアドレス形式バリデーション（簡易）
+    const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
+    if (!emailRegex.test(email)) {
+      return NextResponse.json({ error: 'invalid email' }, { status: 400 })
+    }
+
     let user = await prisma.user.findFirst({ where: { email } })
     if (!user) {
       user = await prisma.user.create({ data: { uid: email, email, name: email.split('@')[0] } })
