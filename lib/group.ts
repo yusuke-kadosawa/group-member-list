@@ -19,7 +19,7 @@ export interface Group {
 export async function getGroupDetail(id: number): Promise<Group> {
   const isServer = typeof window === 'undefined';
   const baseUrl = isServer
-    ? process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+    ? process.env.NEXT_PUBLIC_BASE_URL
     : '';
   const res = await fetch(`${baseUrl}/api/groups/${id}`);
   if (!res.ok) throw new Error('グループ情報の取得に失敗しました');

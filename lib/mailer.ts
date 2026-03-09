@@ -38,17 +38,43 @@ export function createMailTransporter() {
 }
 
 /**
+ * グループ招待メール本文を作成する
+ * @param params 招待メールに必要な情報
+ * @returns { subject, text }
+ */
+export function createGroupInviteMailContent(params: {
+  groupName: string;
+  inviterName?: string;
+  inviteUrl: string;
+  message?: string;
+  expires: Date;
+}) {
+  const { groupName, inviterName, inviteUrl, message, expires } = params;
+  const subject = `${inviterName || '誰か'}さんから「${groupName}」グループへの招待`;
+  const text = `${inviterName || '誰か'}さんがあなたを「${groupName}」グループに招待しています。
+${message ? `メッセージ: ${message}\n` : ''}
+下記のリンクからグループに参加できます（有効期限: ${expires.toLocaleString('ja-JP')}）:
+${inviteUrl}
+
+※心当たりがない場合は何もせずこのメールを削除してください。
+このメールは自動送信です。ご不明点は公式サイトからお問い合わせください。
+
+グループメンバーリスト運営チーム`;
+  return { subject, text };
+}
+
+/**
  * メール送信ヘルパー
  */
 export async function sendEmail(options: {
-  to: string | string[]
-  subject: string
-  html?: string
-  text?: string
-  from?: string
+  to: string | string[];
+  subject: string;
+  html?: string;
+  text?: string;
+  from?: string;
 }) {
-  const transporter = createMailTransporter()
-  const from = options.from || process.env.MAIL_FROM || 'noreply@example.com'
+  const transporter = createMailTransporter();
+  const from = options.from || process.env.MAIL_FROM || 'noreply@example.com';
 
   const info = await transporter.sendMail({
     from,
@@ -56,27 +82,24 @@ export async function sendEmail(options: {
     subject: options.subject,
     html: options.html,
     text: options.text,
-  })
+  });
 
-  console.log('[sendEmail] Message sent:', info.messageId)
+  console.log('[sendEmail] Message sent:', info.messageId);
   if (process.env.NODE_ENV === 'development') {
-    console.log('[sendEmail] Preview URL: http://localhost:1080')
+    console.log('[sendEmail] Preview URL: http://localhost:1080');
   }
 
-  return info
+  return info;
 }
 
 /**
  * グループ招待メール送信（マジックリンク付き）
  */
-export async function sendGroupInviteMail({
-  to,
-  groupName,
-  inviterName,
-  inviteUrl,
-  message,
-  expires,
-}: {
+/**
+ * グループ招待メール送信（テキストメールのみ）
+ * @param params to, groupName, inviterName, inviteUrl, message, expires
+ */
+export async function sendGroupInviteMail(params: {
   to: string;
   groupName: string;
   inviterName?: string;
@@ -84,22 +107,7 @@ export async function sendGroupInviteMail({
   message?: string;
   expires: Date;
 }) {
-  const subject = `${inviterName || '誰か'}さんから「${groupName}」グループへの招待`;
-  const html = `
-    <p>${inviterName || '誰か'}さんがあなたを「${groupName}」グループに招待しています。</p>
-    ${message ? `<p>メッセージ: ${message}</p>` : ''}
-    <p>
-      <a href="${inviteUrl}" style="display:inline-block;padding:12px 24px;background:#22c55e;color:#fff;text-decoration:none;border-radius:4px;font-weight:bold;">グループに参加する（ログイン）</a>
-    </p>
-    <p>このリンクは <b>${expires.toLocaleString('ja-JP')}</b> まで有効です。</p>
-    <p>※心当たりがない場合はこのメールを無視してください。</p>
-    <hr />
-    <p>グループ参加用URL: <a href="${inviteUrl}">${inviteUrl}</a></p>
-  `;
-  const text = `${inviterName || '誰か'}さんがあなたを「${groupName}」グループに招待しています。
-${message ? `メッセージ: ${message}\n` : ''}
-グループ参加用URL: ${inviteUrl}
-有効期限: ${expires.toLocaleString('ja-JP')}
-※心当たりがない場合はこのメールを無視してください。`;
-  return sendEmail({ to, subject, html, text });
+  const { to, ...contentParams } = params;
+  const { subject, text } = createGroupInviteMailContent(contentParams);
+  return sendEmail({ to, subject, text });
 }
