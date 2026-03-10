@@ -7,11 +7,13 @@ import UserList from "../components/UserList"
 export default async function UsersPage() {
   const session = await requireAuth()
 
-  const users = await prisma.user.findMany({
+
+  // UserListのUser型（id: string）に合わせてidをstring化
+  const users = (await prisma.user.findMany({
     orderBy: {
       createdAt: 'desc',
     },
-  })
+  })).map(u => ({ ...u, id: String(u.id) }))
 
   return (
     <Layout

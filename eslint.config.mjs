@@ -1,6 +1,5 @@
+import next from 'eslint-config-next';
+
 export default [
-  {
-    files: ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
-    extends: ["next/core-web-vitals", "next/typescript"],
-  },
+  ...next('core-web-vitals'),
 ];

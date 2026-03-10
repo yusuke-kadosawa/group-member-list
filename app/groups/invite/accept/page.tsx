@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 
-export default async function GroupInviteAcceptPage({ searchParams }: { searchParams: { token?: string } }) {
-  const token = searchParams.token;
+export default async function GroupInviteAcceptPage({ searchParams }: { searchParams: Promise<{ token?: string }> }) {
+  const { token } = await searchParams;
   if (!token) {
     return <div>招待トークンが見つかりません。</div>;
   }

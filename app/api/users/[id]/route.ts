@@ -5,7 +5,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const { id } = await params
   try {
     const user = await prisma.user.findUnique({
-      where: { id },
+      where: { id: Number(id) },
       select: {
         id: true,
         name: true,
@@ -37,7 +37,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     }
 
     const user = await prisma.user.update({
-      where: { id },
+      where: { id: Number(id) },
       data: {
         ...(name && { name }),
         ...(email && { email }),
@@ -62,7 +62,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   const { id } = await params
   try {
     await prisma.user.delete({
-      where: { id },
+      where: { id: Number(id) },
     })
 
     return NextResponse.json({ ok: true })

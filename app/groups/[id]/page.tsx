@@ -24,12 +24,11 @@ interface Group {
 }
 
 
-interface Props {
-  params: { id: string };
-}
 
-export default async function GroupDetailPage({ params }: Props) {
-  const { id } = params;
+
+// Next.js App Router の page コンポーネント（async function）として正しく定義
+export default async function GroupDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const groupId = Number(id);
   const user = await requireAuth();
   const group = await getGroupDetail(groupId);

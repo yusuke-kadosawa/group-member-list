@@ -5,12 +5,14 @@ import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import NavigationItem from "../components/NavigationItem"
 import Layout from "../components/Layout"
+
 import { logRenderDuration } from "@/lib/logging"
+import { redirect } from "next/navigation"
 
 export default async function Home() {
   const renderStart = Date.now()
   let session: any = undefined
-  
+
   try {
     session = await requireAuth()
   } catch (e) {
