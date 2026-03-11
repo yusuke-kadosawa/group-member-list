@@ -36,7 +36,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
     "jest": "^29.7.0",
-    "maildev": "^1.1.1",
+    "maildev": "^2.2.1",
     "prettier": "^3.2.5",
     "prisma": "^5.22.0",
     "tailwindcss": "^4",
