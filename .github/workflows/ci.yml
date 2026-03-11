@@ -38,4 +38,5 @@ jobs:
         with:
           node-version: '20'
       - run: npm ci
+      - run: npx prisma db push
       - run: npm run ci:test
