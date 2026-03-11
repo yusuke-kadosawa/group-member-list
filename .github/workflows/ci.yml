@@ -19,6 +19,16 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+      maildev:
+        image: maildev/maildev:latest
+        ports:
+          - 1025:1025
+          - 1080:1080
+        options: >-
+          --health-cmd "nc -z localhost 1025"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb
       APP_URL: http://localhost:3000

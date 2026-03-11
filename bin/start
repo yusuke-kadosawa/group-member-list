@@ -1,0 +1,19 @@
+#!/bin/zsh
+
+# group-member-list を起動するスクリプト
+
+cd "$(dirname "$0")/.."
+npm install
+# 開発時に古いビルド成果物が残ると混乱するため削除してから起動
+rm -rf .next
+
+# MailDev をバックグラウンドで起動
+echo "Starting MailDev on http://localhost:1080 (SMTP: localhost:1025)..."
+npx maildev &
+MAILDEV_PID=$!
+
+# Next.js を起動
+npx next dev
+
+# 終了時に MailDev も停止
+kill $MAILDEV_PID 2>/dev/null
