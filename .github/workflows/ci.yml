@@ -28,9 +28,4 @@ jobs:
         with:
           node-version: '20'
       - run: npm ci
-      - run: npx prisma generate
-      - run: npx prisma migrate deploy
-      - run: npm run build
-      - run: npm start &
-      - run: sleep 10
-      - run: npx jest
+      - run: npm run ci:test
