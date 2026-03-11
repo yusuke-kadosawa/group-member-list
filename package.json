@@ -14,7 +14,7 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
-    "ci:test": "npm run prisma:generate && npm run prisma:migrate:deploy && npm run build && npm start & sleep 10 && jest"
+    "ci:test": "npm run prisma:generate && npm run prisma:migrate:deploy && npm run build && npm start & sleep 10 && jest",
     "prisma:studio": "prisma studio",
     "reset": "prisma migrate reset --force --skip-seed",
     "rest": "npm run reset && npm run prisma:generate && npm run build"
