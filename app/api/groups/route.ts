@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
         name,
         description: description || null,
         groupUsers: {
-          create: [{ userId, role: 3 }],
+          create: [{ userId: Number(userId), role: 3 }],
         },
       },
       include: {
