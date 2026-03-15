@@ -1,14 +1,17 @@
+import { MESSAGES } from "@/app/constants/messages";
+
 export default function CheckEmail() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <div className="flex flex-col items-center justify-center py-32 px-16 bg-white dark:bg-black rounded-lg shadow-lg text-center">
         <h1 className="text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50 mb-8">
-          メールを確認してください
+          {MESSAGES.AUTH_EMAIL_CHECK}
         </h1>
 
         <p className="text-gray-600 dark:text-gray-400 mb-8">
-          ログインリンクを送信しました。<br />
-          メールを確認してリンクをクリックしてください。
+          {MESSAGES.AUTH_EMAIL_LINK_SENT}
+          <br />
+          {MESSAGES.AUTH_EMAIL_LINK_CLICK}
         </p>
 
         <div className="flex gap-4">
@@ -20,7 +23,7 @@ export default function CheckEmail() {
               type="submit"
               className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
             >
-              メールを再送信
+              {MESSAGES.AUTH_EMAIL_RESEND}
             </button>
           </form>
 
@@ -28,10 +31,10 @@ export default function CheckEmail() {
             href="/"
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
           >
-            戻る
+            {MESSAGES.AUTH_TOP_PAGE}
           </a>
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,6 +1,7 @@
 "use client"
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { MESSAGES } from "@/app/constants/messages";
 
 export default function LoginForm() {
   const [email, setEmail] = useState('')
@@ -16,17 +17,17 @@ export default function LoginForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       })
-      
+
       const data = await res.json()
-      
+
       if (res.ok && data.ok) {
         router.push(`/auth/email-sent?email=${encodeURIComponent(email)}`)
       } else {
-        alert('認証に失敗しました')
+        alert(MESSAGES.AUTH_FAILED)
       }
     } catch (e) {
       console.error('login error', e)
-      alert('ネットワークエラー')
+      alert(MESSAGES.AUTH_EMAIL_SEND_ERROR)
     } finally {
       setLoading(false)
     }
@@ -37,7 +38,7 @@ export default function LoginForm() {
       <input
         name="email"
         type="email"
-        placeholder="メールアドレスを入力"
+        placeholder={MESSAGES.AUTH_EMAIL_INPUT_REQUIRED}
         className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
         required
         value={email}
@@ -48,7 +49,7 @@ export default function LoginForm() {
         disabled={loading}
         className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
       >
-        {loading ? '処理中…' : '認証'}
+        {loading ? MESSAGES.AUTH_LOADING : '認証'}
       </button>
     </form>
   )
