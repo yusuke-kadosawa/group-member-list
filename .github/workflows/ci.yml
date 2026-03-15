@@ -49,7 +49,8 @@ jobs:
       - name: Show postgres logs before test
         run: |
           docker logs $(docker ps -aqf "ancestor=postgres:15") || true
-      - run: npm run ci:test
+      - run: npx prisma db push
+      - run: npm test
       - name: Show running containers after test
         run: docker ps -a
       - name: Show postgres logs after test
