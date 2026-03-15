@@ -50,6 +50,9 @@ jobs:
         run: |
           docker logs $(docker ps -aqf "ancestor=postgres:15") || true
       - run: npx prisma db push
+      - run: npm run build
+      - run: npm run start &
+      - run: sleep 10
       - run: npm test
       - name: Show running containers after test
         run: docker ps -a
