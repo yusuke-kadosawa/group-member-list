@@ -1,0 +1,38 @@
+# API認証付きテスト自動化手順（Vercel対応）
+
+steps:
+  - name: テスト用ユーザー・セッションの準備
+    description: |
+      テスト開始前に、Prisma経由でテスト用ユーザーと有効なセッショントークン（例: test-session-token）をDBに投入する。
+    code: |
+      await prisma.user.create({ ... });
+      await prisma.session.create({
+        data: {
+          sessionToken: 'test-session-token',
+          userId: ...,
+          expires: new Date(Date.now() + 1000 * 60 * 60),
+        },
+      });
+
+  - name: テストリクエストにCookieを付与
+    description: |
+      supertestやfetch等でAPIリクエスト時、Cookieヘッダーに「next-auth.session-token=test-session-token」を付与する。
+    code: |
+      .set('Cookie', 'next-auth.session-token=test-session-token')
+
+  - name: テスト実行
+    description: |
+      認証付きでAPIテストを実行し、期待通りのレスポンス（200や400など）を検証する。
+    code: |
+      const res = await api
+        .post('/api/groups')
+        .set('Cookie', 'next-auth.session-token=test-session-token')
+        .send({ name: 'テストグループ' });
+      expect(res.status).toBe(200);
+
+  - name: クリーンアップ
+    description: |
+      テスト終了後、テスト用ユーザー・セッションをDBから削除する（必要に応じて）。
+    code: |
+      await prisma.session.deleteMany({ where: { sessionToken: 'test-session-token' } });
+      await prisma.user.deleteMany({ where: { email: 'test@example.com' } });
