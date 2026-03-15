@@ -44,4 +44,14 @@ jobs:
         with:
           node-version: '20'
       - run: npm ci
+      - name: Show running containers before test
+        run: docker ps -a
+      - name: Show postgres logs before test
+        run: |
+          docker logs $(docker ps -aqf "ancestor=postgres:15") || true
       - run: npm run ci:test
+      - name: Show running containers after test
+        run: docker ps -a
+      - name: Show postgres logs after test
+        run: |
+          docker logs $(docker ps -aqf "ancestor=postgres:15") || true
