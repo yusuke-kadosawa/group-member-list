@@ -9,10 +9,16 @@ export default async function GroupsPage() {
 
   const renderStart = Date.now();
 
-  // グループ一覧を取得
+  // グループ一覧とオーナー情報を取得
   const groups = await prisma.group.findMany({
     orderBy: {
       createdAt: 'desc',
+    },
+    include: {
+      groupUsers: {
+        where: { role: 3 },
+        include: { user: true },
+      },
     },
   })
 
@@ -33,10 +39,11 @@ export default async function GroupsPage() {
     memberCounts.map(item => [item.groupId, item._count.id])
   )
 
-  // グループにメンバー数を追加
+  // グループにメンバー数とオーナー名を追加
   const groupsWithMembers = groups.map(group => ({
     ...group,
     memberCount: memberCountMap.get(group.id) || 0,
+    ownerName: group.groupUsers[0]?.user?.name || group.groupUsers[0]?.user?.email || '—',
   }))
 
   const renderDur = Date.now() - renderStart;

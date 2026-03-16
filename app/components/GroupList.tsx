@@ -7,6 +7,7 @@ type Group = {
   createdAt: Date
   updatedAt: Date
   memberCount: number
+  ownerName: string
 }
 
 type GroupListProps = {
@@ -34,6 +35,9 @@ export default function GroupList({ groups }: GroupListProps) {
                   グループ名
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  オーナー
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   メンバー数
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -57,6 +61,11 @@ export default function GroupList({ groups }: GroupListProps) {
                     <Link href={`/groups/${group.id}`} className="text-blue-600 dark:text-blue-400 hover:underline font-medium">
                       {group.name}
                     </Link>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
+                      {group.ownerName}
+                    </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
