@@ -11,6 +11,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "jest",
+    "test:local": "bash bin/test-local.sh",
+    "start:test": "sh -c 'export $(grep -v \"^#\" .env.test | xargs) && PORT=3001 next start'",
     "prisma": "prisma",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",

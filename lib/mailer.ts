@@ -86,7 +86,8 @@ export async function sendEmail(options: {
 
   console.log('[sendEmail] Message sent:', info.messageId);
   if (process.env.NODE_ENV === 'development') {
-    console.log('[sendEmail] Preview URL: http://localhost:1080');
+    const webPort = process.env.MAILDEV_WEB_PORT || '1080';
+    console.log(`[sendEmail] Preview URL: http://localhost:${webPort}`);
   }
 
   return info;
