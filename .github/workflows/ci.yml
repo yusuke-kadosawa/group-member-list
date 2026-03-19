@@ -32,7 +32,6 @@ jobs:
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb
       APP_URL: http://localhost:3000
-      NODE_ENV: development
       SMTP_HOST: localhost
       SMTP_PORT: 1025
       SMTP_USER: dummy
@@ -51,9 +50,15 @@ jobs:
           docker logs $(docker ps -aqf "ancestor=postgres:15") || true
       - run: npx prisma db push
       - run: npm run build
+        env:
+          NODE_ENV: production
       - run: npm run start &
+        env:
+          NODE_ENV: production
       - run: sleep 10
       - run: npm test
+        env:
+          NODE_ENV: development
       - name: Show running containers after test
         run: docker ps -a
       - name: Show postgres logs after test
