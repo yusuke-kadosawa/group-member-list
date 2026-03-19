@@ -22,8 +22,8 @@ jobs:
       maildev:
         image: maildev/maildev:latest
         ports:
-          - 1025:1025
-          - 1080:1080
+          - 1026:1025
+          - 1081:1080
         options: >-
           --health-cmd "nc -z localhost 1025"
           --health-interval 10s
@@ -31,12 +31,14 @@ jobs:
           --health-retries 5
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb
-      APP_URL: http://localhost:3000
+      APP_URL: http://localhost:3001
+      TEST_BASE_URL: http://localhost:3001
       SMTP_HOST: localhost
-      SMTP_PORT: 1025
+      SMTP_PORT: 1026
       SMTP_USER: dummy
       SMTP_PASS: dummy
       MAIL_FROM: noreply@example.com
+      MAILDEV_WEB_PORT: 1081
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -55,6 +57,7 @@ jobs:
       - run: npm run start &
         env:
           NODE_ENV: production
+          PORT: 3001
       - run: sleep 10
       - run: npm test
         env:
