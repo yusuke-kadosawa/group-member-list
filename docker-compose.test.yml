@@ -1,0 +1,53 @@
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: testdb
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  maildev:
+    image: maildev/maildev:latest
+    ports:
+      - "1026:1025"
+      - "1081:1080"
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "1025"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    ports:
+      - "3001:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/testdb
+      APP_URL: http://localhost:3001
+      NODE_ENV: production
+      PORT: 3000
+      SMTP_HOST: maildev
+      SMTP_PORT: 1025
+      SMTP_USER: dummy
+      SMTP_PASS: dummy
+      MAIL_FROM: noreply@example.com
+      MAILDEV_WEB_PORT: 1081
+    depends_on:
+      postgres:
+        condition: service_healthy
+      maildev:
+        condition: service_healthy
+    command: >
+      sh -c "
+        npx prisma db push &&
+        npm run start
+      "

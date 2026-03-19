@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 
 beforeAll(async () => {
   // テーブル名は必要に応じて追加
-  await prisma.$executeRawUnsafe('TRUNCATE TABLE "group_users", "groups", "users", "emails", "activity_groups", "group_invites", "verificationtokens" RESTART IDENTITY CASCADE');
+  await prisma.$executeRawUnsafe('TRUNCATE TABLE "group_users", "groups", "users", "emails", "activity_groups", "group_invites", "verificationtokens", "places" RESTART IDENTITY CASCADE');
 });
 import { TextEncoder, TextDecoder } from 'util';
 
