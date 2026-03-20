@@ -23,16 +23,19 @@
     "rest": "npm run reset && npm run prisma:generate && npm run build"
   },
   "dependencies": {
+    "leaflet": "^1.9.4",
     "next": "^15.5.12",
     "nodemailer": "^7.0.7",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "react-leaflet": "^5.0.0"
   },
   "devDependencies": {
     "@prisma/client": "6.15.0",
     "@prisma/internals": "6.15.0",
     "@tailwindcss/postcss": "^4",
     "@types/jest": "^29.5.12",
+    "@types/leaflet": "^1.9.21",
     "@types/node": "^20",
     "@types/nodemailer": "^7.0.9",
     "@types/react": "^19",
