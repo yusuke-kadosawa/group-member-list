@@ -3,27 +3,12 @@
 // TSVファイルからPlaceテーブルにデータをインポートするスクリプト
 
 import { PrismaClient } from '@prisma/client';
-console.log('DATABASE_URL:', process.env.DATABASE_URL);
-
 import dotenv from 'dotenv';
-
-// .env.localを優先して読み込む（process.envにセット）
-const envPath = path.resolve(__dirname, '../.env.local');
-dotenv.config({ path: envPath });
-// 追加: .env.localの内容をprocess.envに明示的にエクスポート
-if (require.main === module) {
-  const fs = require('fs');
-  if (fs.existsSync(envPath)) {
-    const lines = fs.readFileSync(envPath, 'utf8').split(/\r?\n/).filter(Boolean);
-    for (const line of lines) {
-      if (line.startsWith('#') || !line.includes('=')) continue;
-      const [key, ...vals] = line.split('=');
-      const value = vals.join('=');
-      process.env[key.trim()] = value.trim();
-    }
-  }
-}
+import path from 'path';
 import fs from 'fs';
+
+// .env.localを優先して読み込む
+dotenv.config({ path: path.resolve(__dirname, '../.env.local') });
 
 const prisma = new PrismaClient();
 
@@ -40,12 +25,20 @@ async function main() {
   const latIdx = columns.indexOf('latitude');
   const lngIdx = columns.indexOf('longitude');
 
-  for (const row of rows) {
+  if (nameIdx === -1 || latIdx === -1 || lngIdx === -1) {
+    console.error('TSV header must include name, latitude, longitude');
+    process.exit(1);
+  }
+
+  for (const [i, row] of rows.entries()) {
     const cells = row.split('\t');
     const name = cells[nameIdx];
     const latitude = cells[latIdx] ? parseFloat(cells[latIdx]) : null;
     const longitude = cells[lngIdx] ? parseFloat(cells[lngIdx]) : null;
-    if (!name || latitude === null || longitude === null) continue;
+    if (!name || latitude === null || longitude === null) {
+      console.warn(`Skipped row ${i + 2}: invalid or missing data`);
+      continue;
+    }
     await prisma.place.upsert({
       where: { latitude_longitude: { latitude, longitude } },
       update: { name },
