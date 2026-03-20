@@ -4,8 +4,8 @@
 
 import { PrismaClient } from '@prisma/client';
 console.log('DATABASE_URL:', process.env.DATABASE_URL);
+
 import dotenv from 'dotenv';
-import path from 'path';
 
 // .env.localを優先して読み込む（process.envにセット）
 const envPath = path.resolve(__dirname, '../.env.local');
@@ -24,7 +24,6 @@ if (require.main === module) {
   }
 }
 import fs from 'fs';
-import path from 'path';
 
 const prisma = new PrismaClient();
 
