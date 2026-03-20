@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./leaflet.css";
 
 :root {
   --background: #ffffff;

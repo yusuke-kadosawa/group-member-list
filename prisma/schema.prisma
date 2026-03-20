@@ -120,6 +120,7 @@ model Place {
   activities        Activity[]
   activityTemplates ActivityTemplate[]
 
+  @@unique([latitude, longitude])
   @@map("places")
 }
 

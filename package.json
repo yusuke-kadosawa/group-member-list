@@ -20,9 +20,11 @@
     "ci:test": "npx prisma db push && npm run prisma:generate && npm run build && start-server-and-test start http://localhost:3000 jest",
     "prisma:studio": "prisma studio",
     "reset": "prisma migrate reset --force --skip-seed",
-    "rest": "npm run reset && npm run prisma:generate && npm run build"
+    "rest": "npm run reset && npm run prisma:generate && npm run build",
+    "db:seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "dotenv": "^16.6.1",
     "leaflet": "^1.9.4",
     "next": "^15.5.12",
     "nodemailer": "^7.0.7",

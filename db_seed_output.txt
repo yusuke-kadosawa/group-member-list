@@ -1,0 +1,4 @@
+
+> group-member-list@0.1.0 db:seed
+> tsx prisma/seed.ts
+

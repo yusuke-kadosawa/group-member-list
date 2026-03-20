@@ -2,7 +2,9 @@ import { requireAuth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+
 import Layout from "@/app/components/Layout"
+import PlaceMapWrapper from "@/app/components/PlaceMapWrapper"
 
 export default async function PlaceDetailPage({
   params,
@@ -33,7 +35,7 @@ export default async function PlaceDetailPage({
         </Link>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow">
+      <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow max-w-2xl mx-auto">
         <div className="space-y-6">
           <div>
             <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -43,6 +45,7 @@ export default async function PlaceDetailPage({
               {place.name}
             </p>
           </div>
+
 
           {place.latitude !== null && (
             <div>
@@ -63,6 +66,13 @@ export default async function PlaceDetailPage({
               <p className="mt-1 text-lg text-gray-900 dark:text-white">
                 {place.longitude.toFixed(6)}
               </p>
+            </div>
+          )}
+
+          {/* 地図表示: 緯度・経度が両方存在する場合のみ */}
+          {place.latitude !== null && place.longitude !== null && (
+            <div className="pt-2 w-full block clear-both">
+              <PlaceMapWrapper latitude={place.latitude} longitude={place.longitude} placeName={place.name} />
             </div>
           )}
 
