@@ -21,7 +21,8 @@
     "prisma:studio": "prisma studio",
     "reset": "prisma migrate reset --force --skip-seed",
     "rest": "npm run reset && npm run prisma:generate && npm run build",
-    "db:seed": "tsx prisma/seed.ts"
+    "db:seed": "tsx prisma/seed.ts",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "dotenv": "^16.6.1",

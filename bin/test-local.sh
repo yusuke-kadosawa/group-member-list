@@ -10,8 +10,14 @@ set +a
 # テスト用サービスをDocker Composeで起動
 docker compose -f docker-compose.test.yml up -d --build
 
-echo "サービス起動待ち..."
-sleep 15
+
+# appサービス（Next.js）が3001で起動するのを待つ
+npx wait-on http://localhost:3001
+
+
+# DBスキーマ反映・シード投入
+npx prisma db push
+npm run db:seed
 
 # テスト実行
 npm test

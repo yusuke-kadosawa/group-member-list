@@ -51,6 +51,7 @@ jobs:
         run: |
           docker logs $(docker ps -aqf "ancestor=postgres:15") || true
       - run: npx prisma db push
+      - run: npm run db:seed
       - run: npm run build
         env:
           NODE_ENV: production
