@@ -5,8 +5,8 @@ import dynamic from 'next/dynamic'
 
 const PlaceMapEditable = dynamic(() => import('@/app/components/PlaceMapEditable'), { ssr: false })
 
-const FALLBACK_LAT = 35.6812
-const FALLBACK_LNG = 139.7671
+const FALLBACK_LAT = 35.3036
+const FALLBACK_LNG = 139.2531
 
 type PlaceFormProps = {
   initialData?: {

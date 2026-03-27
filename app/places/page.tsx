@@ -1,8 +1,7 @@
 import { requireAuth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
-import PlaceList from "@/app/components/PlaceList"
-import PlacesMap from "@/app/components/PlacesMap"
+import PlacesSection from "@/app/components/PlacesSection"
 import Layout from "../components/Layout"
 
 export default async function PlacesPage() {
@@ -33,14 +32,7 @@ export default async function PlacesPage() {
           新規作成
         </Link>
       </div>
-      <div className="flex flex-col md:flex-row gap-6">
-        <div className="md:w-1/2 rounded-lg overflow-hidden shadow flex-shrink-0">
-          <PlacesMap places={places} />
-        </div>
-        <div className="md:w-1/2 min-w-0">
-          <PlaceList places={places} />
-        </div>
-      </div>
+      <PlacesSection places={places} />
     </Layout>
   )
 }

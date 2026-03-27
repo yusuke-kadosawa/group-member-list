@@ -1,6 +1,7 @@
 "use client"
 import dynamic from "next/dynamic"
-import React from "react"
+import React, { useEffect, useState } from "react"
+import type * as LeafletTypes from "leaflet"
 
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
@@ -29,13 +30,38 @@ export type PlacesMapPlace = {
 type Props = {
   places: PlacesMapPlace[]
   zoom?: number
+  hoveredId?: number | null
+  onHover?: (id: number | null) => void
+}
+
+function makeNumberedIcon(
+  L: typeof LeafletTypes,
+  num: number,
+  isHovered: boolean
+): LeafletTypes.DivIcon {
+  const size = isHovered ? 34 : 28
+  const bg = isHovered ? "#f97316" : "#3b82f6"
+  const fontSize = isHovered ? 14 : 12
+  return L.divIcon({
+    html: `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${bg};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:${fontSize}px;border:2px solid #fff;box-shadow:0 2px 4px rgba(0,0,0,0.35);line-height:1;">${num}</div>`,
+    className: "",
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+    popupAnchor: [0, -(size / 2)],
+  })
 }
 
 const DEFAULT_ZOOM = 15
 const TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 const FALLBACK_CENTER: [number, number] = [35.6812, 139.7671] // 東京
 
-export default function PlacesMap({ places, zoom = DEFAULT_ZOOM }: Props) {
+export default function PlacesMap({ places, zoom = DEFAULT_ZOOM, hoveredId, onHover }: Props) {
+  const [L, setL] = useState<typeof LeafletTypes | null>(null)
+
+  useEffect(() => {
+    import("leaflet").then((mod) => setL(mod))
+  }, [])
+
   const validPlaces = places.filter(
     (p): p is PlacesMapPlace & { latitude: number; longitude: number } =>
       p.latitude !== null &&
@@ -69,8 +95,16 @@ export default function PlacesMap({ places, zoom = DEFAULT_ZOOM }: Props) {
         scrollWheelZoom={true}
       >
         <TileLayer url={TILE_URL} />
-        {validPlaces.map((place) => (
-          <Marker key={place.id} position={[place.latitude, place.longitude]}>
+        {validPlaces.map((place, index) => (
+          <Marker
+            key={place.id}
+            position={[place.latitude, place.longitude]}
+            icon={L ? makeNumberedIcon(L, index + 1, hoveredId === place.id) : undefined}
+            eventHandlers={{
+              mouseover: () => onHover?.(place.id),
+              mouseout: () => onHover?.(null),
+            }}
+          >
             <Popup>
               <a href={`/places/${place.id}`} className="text-blue-600 hover:underline font-medium">
                 {place.name}
