@@ -3,6 +3,7 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   testTimeout: 30000,
+  runInBand: true,
   testMatch: ['**/__tests__/**/*.test.ts','**/__tests__/**/*.test.js'],
   moduleFileExtensions: ['ts', 'js', 'json'],
   roots: ['<rootDir>'],
