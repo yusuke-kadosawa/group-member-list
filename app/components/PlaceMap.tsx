@@ -59,7 +59,7 @@ export default function PlaceMap({
         center={[latitude, longitude]}
         zoom={zoom + 2}
         style={{ height: height, width: "100%", maxWidth: "100%" }}
-        scrollWheelZoom={false}
+        scrollWheelZoom={true}
       >
         <TileLayer url={TILE_URL} />
         <Marker position={[latitude, longitude]}>

@@ -9,6 +9,8 @@ export default async function Home() {
     redirect('/home');
   }
 
+  const dbAvailable = !!process.env.DATABASE_URL;
+
   // 未認証: ログインフォームを表示
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
@@ -17,7 +19,7 @@ export default async function Home() {
           ようこそ！
         </h1>
         <p>このシステムを太平洋を漂う偶然の遭遇と離別と再会に渦巻く古の縁あるものに捧ぐ</p>
-        <LoginForm />
+        <LoginForm dbAvailable={dbAvailable} />
         <p>@{typeof window !== 'undefined' ? window.location.host : 'localhost:3000'}</p>
       </main>
     </div>
