@@ -33,7 +33,11 @@ const InviteModal: React.FC<InviteModalProps> = ({ isOpen, onClose, groupId, onS
       if (!res.ok) throw new Error(data.error || '招待に失敗しました');
       setEmails('');
       setMessage('');
-      onSuccess?.();
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        setSuccess('招待メールを送信しました');
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
