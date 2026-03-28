@@ -287,11 +287,11 @@ describe('/api/activities API', () => {
       expect(res.status).toBe(404);
     });
 
-    it('存在しないidは500（Prismaがスロー）', async () => {
+    it('存在しないidは404（not found）', async () => {
       const res = await api
         .delete('/api/activities/999999')
         .set('Cookie', authCookie);
-      expect(res.status).toBe(500);
+      expect(res.status).toBe(404);
     });
 
     it('不正なidは400', async () => {
