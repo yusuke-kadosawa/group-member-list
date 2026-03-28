@@ -29,8 +29,7 @@ interface Group {
 // Next.js App Router の page コンポーネント（async function）として正しく定義
 export default async function GroupDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams?: Promise<{ invited?: string }> }) {
   const { id } = await params;
-  const resolvedSearchParams = searchParams ? await searchParams : {};
-  const invited = resolvedSearchParams.invited === 'true';
+  const invited = searchParams ? (await searchParams)?.invited === 'true' : false;
   const groupId = Number(id);
   const user = await requireAuth();
   const group = await getGroupDetail(groupId);
