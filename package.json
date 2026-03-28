@@ -10,7 +10,7 @@
     "start": "next start",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "test": "jest",
+    "test": "jest --runInBand",
     "test:local": "bash bin/test-local.sh",
     "start:test": "sh -c 'export $(grep -v \"^#\" .env.test | xargs) && PORT=3001 next start'",
     "prisma": "prisma",
