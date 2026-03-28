@@ -94,6 +94,9 @@ describe('/api/activities API', () => {
         .set('Cookie', authCookie);
       expect(res.status).toBe(200);
       expect(Array.isArray(res.body.activities)).toBe(true);
+      expect(
+        res.body.activities.some((activity: any) => activity.id === createdActivityId),
+      ).toBe(true);
     });
   });
 
