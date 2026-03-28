@@ -27,8 +27,10 @@ describe('/api/activities API', () => {
   });
 
   afterAll(async () => {
-    await prisma.activityUser.deleteMany({ where: { activityId: createdActivityId } });
-    await prisma.activityGroup.deleteMany({ where: { activityId: createdActivityId } });
+    if (createdActivityId != null) {
+      await prisma.activityUser.deleteMany({ where: { activityId: createdActivityId } });
+      await prisma.activityGroup.deleteMany({ where: { activityId: createdActivityId } });
+    }
     await prisma.activity.deleteMany({ where: { name: { startsWith: 'テスト活動' } } });
     await prisma.session.deleteMany({ where: { sessionToken: TEST_SESSION_TOKEN } });
     await prisma.user.deleteMany({ where: { email: TEST_USER.email } });
