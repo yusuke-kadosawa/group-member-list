@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from '@/lib/session'
 import { prisma } from '@/lib/prisma'
+import { Prisma } from '@prisma/client'
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -117,7 +118,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     })
   } catch (error) {
     console.error('activities PUT error', error)
-    if (error instanceof Error && error.message.includes('Record to update not found')) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
       return NextResponse.json({ error: 'Activity not found' }, { status: 404 })
     }
     return NextResponse.json({ error: 'Failed to update activity' }, { status: 500 })
@@ -144,6 +145,9 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     return NextResponse.json({ ok: true })
   } catch (error) {
     console.error('activities DELETE error', error)
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+      return NextResponse.json({ error: 'Activity not found' }, { status: 404 })
+    }
     return NextResponse.json({ error: 'Failed to delete activity' }, { status: 500 })
   }
 }
