@@ -4,9 +4,10 @@ interface InviteModalProps {
   isOpen: boolean;
   onClose: () => void;
   groupId: number;
+  onSuccess?: () => void;
 }
 
-const InviteModal: React.FC<InviteModalProps> = ({ isOpen, onClose, groupId }) => {
+const InviteModal: React.FC<InviteModalProps> = ({ isOpen, onClose, groupId, onSuccess }) => {
   const [emails, setEmails] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -30,9 +31,9 @@ const InviteModal: React.FC<InviteModalProps> = ({ isOpen, onClose, groupId }) =
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || '招待に失敗しました');
-      setSuccess(`${data.count || 1}人に招待メールを送信しました`);
       setEmails('');
       setMessage('');
+      onSuccess?.();
     } catch (err: any) {
       setError(err.message);
     } finally {

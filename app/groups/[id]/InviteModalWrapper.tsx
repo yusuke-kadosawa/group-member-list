@@ -1,9 +1,17 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import InviteModal from "../../components/InviteModal";
 
 const InviteModalWrapper = ({ groupId }: { groupId: number }) => {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
+
+  const handleSuccess = () => {
+    setOpen(false);
+    router.push(`/groups/${groupId}?invited=true`);
+  };
+
   return (
     <>
       <button
@@ -12,7 +20,7 @@ const InviteModalWrapper = ({ groupId }: { groupId: number }) => {
       >
         招待
       </button>
-      <InviteModal isOpen={open} onClose={() => setOpen(false)} groupId={groupId} />
+      <InviteModal isOpen={open} onClose={() => setOpen(false)} groupId={groupId} onSuccess={handleSuccess} />
     </>
   );
 };

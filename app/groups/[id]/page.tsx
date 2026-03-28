@@ -27,8 +27,10 @@ interface Group {
 
 
 // Next.js App Router の page コンポーネント（async function）として正しく定義
-export default async function GroupDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function GroupDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams?: Promise<{ invited?: string }> }) {
   const { id } = await params;
+  const resolvedSearchParams = searchParams ? await searchParams : {};
+  const invited = resolvedSearchParams.invited === 'true';
   const groupId = Number(id);
   const user = await requireAuth();
   const group = await getGroupDetail(groupId);
@@ -63,6 +65,11 @@ export default async function GroupDetailPage({ params }: { params: Promise<{ id
 
   return (
     <Layout session={user} headerTitle={`グループ詳細 - ${group.name}`}>
+      {invited && (
+        <div className="mb-4 px-4 py-3 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-lg">
+          招待メールを送信しました
+        </div>
+      )}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
           <div>
