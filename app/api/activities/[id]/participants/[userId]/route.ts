@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from '@/lib/session'
 import { prisma } from '@/lib/prisma'
+import { Prisma } from '@prisma/client'
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string; userId: string }> }) {
   const { id, userId } = await params
@@ -45,7 +46,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     })
   } catch (error) {
     console.error('activities participants PUT error', error)
-    if (error instanceof Error && error.message.includes('Record to update not found')) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
       return NextResponse.json({ error: 'Participant not found' }, { status: 404 })
     }
     return NextResponse.json({ error: 'Failed to update participant' }, { status: 500 })
