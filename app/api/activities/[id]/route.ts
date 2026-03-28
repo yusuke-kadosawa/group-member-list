@@ -145,6 +145,9 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     return NextResponse.json({ ok: true })
   } catch (error) {
     console.error('activities DELETE error', error)
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+      return NextResponse.json({ error: 'Activity not found' }, { status: 404 })
+    }
     return NextResponse.json({ error: 'Failed to delete activity' }, { status: 500 })
   }
 }
