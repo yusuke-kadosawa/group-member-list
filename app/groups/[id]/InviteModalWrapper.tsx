@@ -7,9 +7,9 @@ const InviteModalWrapper = ({ groupId }: { groupId: number }) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
-  const handleSuccess = () => {
+  const handleSuccess = (count: number) => {
     setOpen(false);
-    router.replace(`/groups/${groupId}?invited=true`);
+    router.replace(`/groups/${groupId}?invited=true&count=${count}`);
   };
 
   return (

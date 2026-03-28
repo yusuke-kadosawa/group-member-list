@@ -7,6 +7,9 @@ import { Suspense } from 'react';
 import Layout from '../../components/Layout';
 import Link from 'next/link';
 import InviteModalWrapper from './InviteModalWrapper';
+import InviteBanner from './InviteBanner';
+import GroupTabs from './GroupTabs';
+import GroupInvitesTab from './GroupInvitesTab';
 // Tabs, TabはUIコンポーネントとして別途実装してください。
 
 interface GroupUser {
@@ -27,9 +30,11 @@ interface Group {
 
 
 // Next.js App Router の page コンポーネント（async function）として正しく定義
-export default async function GroupDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams?: Promise<{ invited?: string }> }) {
+export default async function GroupDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams?: Promise<{ invited?: string; count?: string }> }) {
   const { id } = await params;
-  const invited = searchParams ? (await searchParams)?.invited === 'true' : false;
+  const resolvedSearch = searchParams ? await searchParams : {};
+  const invited = resolvedSearch.invited === 'true';
+  const invitedCount = invited ? Number(resolvedSearch.count ?? 0) : 0;
   const groupId = Number(id);
   const user = await requireAuth();
   const group = await getGroupDetail(groupId);
@@ -64,11 +69,7 @@ export default async function GroupDetailPage({ params, searchParams }: { params
 
   return (
     <Layout session={user} headerTitle={`グループ詳細 - ${group.name}`}>
-      {invited && (
-        <div className="mb-4 px-4 py-3 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-lg">
-          招待メールを送信しました
-        </div>
-      )}
+      {invited && <InviteBanner groupId={groupId} count={invitedCount} />}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
           <div>
@@ -93,20 +94,19 @@ export default async function GroupDetailPage({ params, searchParams }: { params
           </div>
         </div>
       </div>
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <div className="mb-4">
-          <nav className="flex gap-4 border-b pb-2">
-            <button className="px-3 py-1 text-blue-600 dark:text-blue-400 border-b-2 border-blue-500 font-semibold">メンバー一覧</button>
-            <button className="px-3 py-1 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">活動一覧</button>
-          </nav>
-        </div>
-        <div>
+      <GroupTabs
+        membersTab={
           <Suspense fallback={<div>Loading...</div>}>
             <GroupMembersTab groupId={groupId} />
           </Suspense>
-        </div>
-        {/* 活動一覧タブはUI拡張時に切り替え実装 */}
-      </div>
+        }
+        invitesTab={<GroupInvitesTab groupId={groupId} />}
+        activitiesTab={
+          <Suspense fallback={<div>Loading...</div>}>
+            <GroupActivitiesTab groupId={groupId} />
+          </Suspense>
+        }
+      />
     </Layout>
   );
 }

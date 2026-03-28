@@ -4,7 +4,7 @@ interface InviteModalProps {
   isOpen: boolean;
   onClose: () => void;
   groupId: number;
-  onSuccess?: () => void;
+  onSuccess?: (count: number) => void;
 }
 
 const InviteModal: React.FC<InviteModalProps> = ({ isOpen, onClose, groupId, onSuccess }) => {
@@ -12,7 +12,6 @@ const InviteModal: React.FC<InviteModalProps> = ({ isOpen, onClose, groupId, onS
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
@@ -20,7 +19,6 @@ const InviteModal: React.FC<InviteModalProps> = ({ isOpen, onClose, groupId, onS
     e.preventDefault();
     setLoading(true);
     setError(null);
-    setSuccess(null);
     try {
       // カンマ区切り→配列
       const emailArray = emails.split(',').map(e => e.trim()).filter(Boolean);
@@ -33,10 +31,9 @@ const InviteModal: React.FC<InviteModalProps> = ({ isOpen, onClose, groupId, onS
       if (!res.ok) throw new Error(data.error || '招待に失敗しました');
       setEmails('');
       setMessage('');
+      const count = data.count ?? 0;
       if (onSuccess) {
-        onSuccess();
-      } else {
-        setSuccess('招待メールを送信しました');
+        onSuccess(count);
       }
     } catch (err: any) {
       setError(err.message);
@@ -74,7 +71,6 @@ const InviteModal: React.FC<InviteModalProps> = ({ isOpen, onClose, groupId, onS
             </button>
           </div>
           {error && <div className="text-red-500 mt-2">{error}</div>}
-          {success && <div className="text-green-600 mt-2">{success}</div>}
         </form>
       </div>
     </div>
