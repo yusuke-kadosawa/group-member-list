@@ -9,7 +9,7 @@ const InviteModalWrapper = ({ groupId }: { groupId: number }) => {
 
   const handleSuccess = () => {
     setOpen(false);
-    router.push(`/groups/${groupId}?invited=true`);
+    router.replace(`/groups/${groupId}?invited=true`);
   };
 
   return (
