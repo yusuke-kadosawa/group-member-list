@@ -43,6 +43,11 @@ const Layout: React.FC<LayoutProps> = ({ children, session, headerTitle }) => {
             description="活動の計画と参加者管理"
             href="/activities"
           />
+          <NavigationItem
+            title="活動テンプレート"
+            description="繰り返し活動の雛形管理"
+            href="/activity-templates"
+          />
         </nav>
       </aside>
       <main className="flex-1 bg-zinc-50 dark:bg-black">

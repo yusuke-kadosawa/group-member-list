@@ -121,12 +121,6 @@ export default function ActivityList() {
         {activities.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-500 dark:text-gray-400">活動がありません</p>
-            <Link
-              href="/activities/new"
-              className="mt-4 inline-block px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-            >
-              最初の活動を作成
-            </Link>
           </div>
         ) : (
           <ul className="divide-y divide-gray-200 dark:divide-gray-700">

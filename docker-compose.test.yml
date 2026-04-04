@@ -34,9 +34,9 @@ services:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/testdb
       APP_URL: http://localhost:3001
       NODE_ENV: production
-      PORT: 3000
+      PORT: 3001
       SMTP_HOST: maildev
-      SMTP_PORT: 1025
+      SMTP_PORT: 1026
       SMTP_USER: dummy
       SMTP_PASS: dummy
       MAIL_FROM: noreply@example.com

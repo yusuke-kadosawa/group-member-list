@@ -39,10 +39,12 @@ describe('/api/activities API', () => {
 
   describe('POST /api/activities', () => {
     it('name・startedAt必須で活動を作成できる（201）', async () => {
+      // 現在時刻より1日後を設定
+      const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
       const res = await api
         .post('/api/activities')
         .set('Cookie', authCookie)
-        .send({ name: 'テスト活動', startedAt: '2026-04-01T10:00:00.000Z' });
+        .send({ name: 'テスト活動', startedAt: futureDate });
       expect(res.status).toBe(201);
       expect(res.body.activity).toBeDefined();
       expect(res.body.activity.name).toBe('テスト活動');
@@ -51,10 +53,11 @@ describe('/api/activities API', () => {
     });
 
     it('name未指定は400', async () => {
+      const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
       const res = await api
         .post('/api/activities')
         .set('Cookie', authCookie)
-        .send({ startedAt: '2026-04-01T10:00:00.000Z' });
+        .send({ startedAt: futureDate });
       expect(res.status).toBe(400);
       expect(res.body.error).toBe('name and startedAt are required');
     });
@@ -69,9 +72,10 @@ describe('/api/activities API', () => {
     });
 
     it('未認証は401', async () => {
+      const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
       const res = await api
         .post('/api/activities')
-        .send({ name: 'テスト活動', startedAt: '2026-04-01T10:00:00.000Z' });
+        .send({ name: 'テスト活動', startedAt: futureDate });
       expect(res.status).toBe(401);
     });
   });
