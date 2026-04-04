@@ -96,6 +96,12 @@ export async function PUT(
       }
     }
 
+    // description は string | null のみ許可（指定された場合のみ）
+    if (description !== undefined) {
+      if (description !== null && typeof description !== 'string') {
+        return NextResponse.json({ error: 'invalid description' }, { status: 400 })
+      }
+    }
     // whenType と when のセット強制
     const hasWhenType = whenType !== undefined
     const hasWhen = when !== undefined
