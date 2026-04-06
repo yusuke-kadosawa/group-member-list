@@ -129,7 +129,7 @@ model ActivityTemplate {
   name        String
   description String?
   whenType    Int
-  when        String
+  when        String?
   placeId     Int?
 
   place Place? @relation(fields: [placeId], references: [id])

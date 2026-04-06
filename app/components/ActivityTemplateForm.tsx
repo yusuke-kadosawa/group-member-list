@@ -182,14 +182,13 @@ export default function ActivityTemplateForm({ mode, initialData }: ActivityTemp
           htmlFor="when-input"
           className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
         >
-          時間値 <span className="text-red-500">*</span>
+          時間値
         </label>
 
         {whenType === 0 && (
           <input
             id="when-input"
             type="date"
-            required
             value={when}
             onChange={(e) => setWhen(e.target.value)}
             placeholder="YYYY-MM-DD"
@@ -200,7 +199,6 @@ export default function ActivityTemplateForm({ mode, initialData }: ActivityTemp
         {whenType === 1 && (
           <select
             id="when-input"
-            required
             value={when}
             onChange={(e) => setWhen(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
@@ -218,7 +216,6 @@ export default function ActivityTemplateForm({ mode, initialData }: ActivityTemp
           <input
             id="when-input"
             type="time"
-            required
             value={when}
             onChange={(e) => setWhen(e.target.value)}
             placeholder="HH:MM"

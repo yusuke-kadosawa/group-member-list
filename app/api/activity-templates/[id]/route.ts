@@ -118,17 +118,16 @@ export async function PUT(
       )
     }
 
-    // whenType バリデーション
+    // whenType バリデーション（空欄許容）
     if (hasWhenType) {
       if (![0, 1, 2].includes(whenType)) {
         return NextResponse.json({ error: 'invalid whenType' }, { status: 400 })
       }
-      if (!when || typeof when !== 'string' || when.trim() === '') {
-        return NextResponse.json({ error: 'when required' }, { status: 400 })
-      }
-      const whenError = validateWhen(whenType, when)
-      if (whenError) {
-        return NextResponse.json({ error: whenError }, { status: 400 })
+      if (when && typeof when === 'string' && when.trim() !== '') {
+        const whenError = validateWhen(whenType, when)
+        if (whenError) {
+          return NextResponse.json({ error: whenError }, { status: 400 })
+        }
       }
     }
 
