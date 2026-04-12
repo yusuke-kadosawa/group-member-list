@@ -9,16 +9,18 @@ const path = require('path');
 const prisma = new PrismaClient();
 
 async function main() {
+  const toHalfWidth = v => typeof v === 'string' ? v.replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0)) : v;
+  const escapeNewline = v => typeof v === 'string' ? v.replace(/\r?\n/g, '\\n') : v;
   const templates = await prisma.activityTemplate.findMany({ orderBy: { id: 'asc' } });
   const tsvLines = [
     'id\tname\tdescription\twhenType\twhen\tplaceId',
     ...templates.map(t => [
       t.id,
       t.name,
-      t.description ?? '',
-      t.whenType,
-      t.when,
-      t.placeId ?? ''
+      escapeNewline(t.description ?? ''),
+      t.whenType !== undefined && t.whenType !== null ? toHalfWidth(String(t.whenType)) : '',
+      escapeNewline(t.when ?? ''),
+      t.placeId !== undefined && t.placeId !== null ? toHalfWidth(String(t.placeId)) : ''
     ].join('\t'))
   ];
   const outPath = path.resolve(__dirname, '../prisma/activity_templates_seed.tsv');

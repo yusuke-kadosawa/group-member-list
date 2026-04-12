@@ -6,6 +6,7 @@ import { PrismaClient } from '@prisma/client';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
+import { parseTsvWithMultiline } from './tsv-parse';
 
 // .env.localを優先して読み込む
 dotenv.config({ path: path.resolve(__dirname, '../.env.local') });
@@ -13,7 +14,7 @@ dotenv.config({ path: path.resolve(__dirname, '../.env.local') });
 const prisma = new PrismaClient();
 
 async function main() {
-  // Placeシード
+  // Placeシード（従来通り）
   const placesTsvPath = path.resolve(__dirname, 'places_seed.tsv');
   if (fs.existsSync(placesTsvPath)) {
     const lines = fs.readFileSync(placesTsvPath, 'utf8').split(/\r?\n/).filter(Boolean);
@@ -48,40 +49,44 @@ async function main() {
     console.warn('places_seed.tsv not found, skipping Place seeding');
   }
 
-  // ActivityTemplateシード
+  // ActivityTemplateシード（テキスト内改行対応）
   const actTmplTsvPath = path.resolve(__dirname, 'activity_templates_seed.tsv');
   if (fs.existsSync(actTmplTsvPath)) {
-    const lines = fs.readFileSync(actTmplTsvPath, 'utf8').split(/\r?\n/).filter(Boolean);
-    const [header, ...rows] = lines;
-    const columns = header.split('\t');
-    const nameIdx = columns.indexOf('name');
-    const descIdx = columns.indexOf('description');
-    const whenTypeIdx = columns.indexOf('whenType');
-    const whenIdx = columns.indexOf('when');
-    const placeIdIdx = columns.indexOf('placeId');
+    const tsvRaw = fs.readFileSync(actTmplTsvPath, 'utf8');
+    const rows = parseTsvWithMultiline(tsvRaw);
+    if (rows.length < 2) {
+      console.warn('activity_templates_seed.tsv has no data rows');
+    } else {
+      const columns = rows[0];
+      const nameIdx = columns.indexOf('name');
+      const descIdx = columns.indexOf('description');
+      const whenTypeIdx = columns.indexOf('whenType');
+      const whenIdx = columns.indexOf('when');
+      const placeIdIdx = columns.indexOf('placeId');
 
-    if (nameIdx === -1 || whenTypeIdx === -1) {
-      console.error('activity_templates_seed.tsv header must include at least name, whenType');
-      process.exit(1);
-    }
-
-    for (const [i, row] of rows.entries()) {
-      const cells = row.split('\t');
-      const name = cells[nameIdx];
-      const description = descIdx !== -1 ? cells[descIdx] : undefined;
-      const whenType = cells[whenTypeIdx] ? parseInt(cells[whenTypeIdx]) : null;
-      const when = whenIdx !== -1 ? cells[whenIdx] : undefined;
-      const placeId = placeIdIdx !== -1 && cells[placeIdIdx] ? parseInt(cells[placeIdIdx]) : undefined;
-      if (!name || whenType === null) {
-        console.warn(`[ActivityTemplate] Skipped row ${i + 2}: invalid or missing data`);
-        continue;
+      if (nameIdx === -1 || whenTypeIdx === -1) {
+        console.error('activity_templates_seed.tsv header must include at least name, whenType');
+        process.exit(1);
       }
-      await prisma.activityTemplate.upsert({
-        where: { id: i + 1 }, // idでupsert（既存データがなければcreate）
-        update: { name, description, whenType, when, placeId },
-        create: { name, description, whenType, when, placeId },
-      });
-      console.log(`[ActivityTemplate] Upserted: ${name}`);
+
+      for (let i = 1; i < rows.length; i++) {
+        const cells = rows[i];
+        const name = cells[nameIdx];
+        const description = descIdx !== -1 ? cells[descIdx] : undefined;
+        const whenType = cells[whenTypeIdx] ? parseInt(cells[whenTypeIdx]) : null;
+        const when = whenIdx !== -1 ? cells[whenIdx] : undefined;
+        const placeId = placeIdIdx !== -1 && cells[placeIdIdx] ? parseInt(cells[placeIdIdx]) : undefined;
+        if (!name || whenType === null) {
+          console.warn(`[ActivityTemplate] Skipped row ${i + 1}: invalid or missing data`);
+          continue;
+        }
+        await prisma.activityTemplate.upsert({
+          where: { id: i }, // idでupsert（既存データがなければcreate）
+          update: { name, description, whenType, when, placeId },
+          create: { name, description, whenType, when, placeId },
+        });
+        console.log(`[ActivityTemplate] Upserted: ${name}`);
+      }
     }
   } else {
     console.warn('activity_templates_seed.tsv not found, skipping ActivityTemplate seeding');
