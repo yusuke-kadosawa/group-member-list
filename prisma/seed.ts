@@ -8,8 +8,8 @@ import path from 'path';
 import fs from 'fs';
 import { parseTsvWithMultiline } from './tsv-parse';
 
-// .env.localを優先して読み込む
-dotenv.config({ path: path.resolve(__dirname, '../.env.local') });
+// .env（CIのDATABASE_URL）を優先して読み込む
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const prisma = new PrismaClient();
 
