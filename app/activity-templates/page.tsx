@@ -63,7 +63,7 @@ export default async function ActivityTemplatesPage() {
                     {WHEN_TYPE_LABEL[t.whenType] ?? '不明'}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                    {formatWhen(t.whenType, t.when)}
+                    {formatWhen(t.whenType, t.when ?? '')}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                     {t.place?.name ?? '—'}
