@@ -74,7 +74,7 @@ export default async function ActivityTemplateDetailPage({
           <div>
             <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">時間値</h3>
             <p className="mt-1 text-gray-900 dark:text-white">
-              {formatWhen(activityTemplate.whenType, activityTemplate.when)}
+              {formatWhen(activityTemplate.whenType, activityTemplate.when ?? '')}
             </p>
           </div>
 
