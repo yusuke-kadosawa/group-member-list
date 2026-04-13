@@ -26,6 +26,12 @@ export default async function EditActivityTemplatePage({
     notFound()
   }
 
+  // whenがnullの場合は空文字列に変換
+  const initialData = {
+    ...activityTemplate,
+    when: activityTemplate.when ?? '',
+  }
+
   return (
     <Layout session={session} headerTitle="テンプレート編集">
       <div className="mb-4">
@@ -38,7 +44,7 @@ export default async function EditActivityTemplatePage({
       </div>
 
       <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow">
-        <ActivityTemplateForm mode="edit" initialData={activityTemplate} />
+        <ActivityTemplateForm mode="edit" initialData={initialData} />
       </div>
     </Layout>
   )
