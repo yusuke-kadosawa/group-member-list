@@ -91,12 +91,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'invalid whenType' }, { status: 400 })
     }
 
-    // when バリデーション（空欄許容）
-    if (when && typeof when === 'string' && when.trim() !== '') {
-      const whenError = validateWhen(whenType, when)
-      if (whenError) {
-        return NextResponse.json({ error: whenError }, { status: 400 })
-      }
+    // when バリデーション（必須）
+    if (!when || typeof when !== 'string' || when.trim() === '') {
+      return NextResponse.json({ error: 'when required' }, { status: 400 })
+    }
+    const whenError = validateWhen(whenType, when)
+    if (whenError) {
+      return NextResponse.json({ error: whenError }, { status: 400 })
     }
 
     // placeId 存在チェック

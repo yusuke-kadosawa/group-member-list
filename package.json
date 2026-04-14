@@ -10,7 +10,7 @@
     "start": "next start",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "test": "jest --runInBand",
+    "test": "npm run db:seed && start-server-and-test dev http://localhost:3000 jest --runInBand",
     "test:local": "bash bin/test-local.sh",
     "start:test": "sh -c 'export $(grep -v \"^#\" .env.test | xargs) && PORT=3001 next start'",
     "prisma": "prisma",
