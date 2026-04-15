@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from '@/lib/session'
+import { getSessionWithLog } from '../_util/sessionLog'
 import { prisma } from '@/lib/prisma'
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession()
+    const session = await getSessionWithLog(req)
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }

@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from '@/lib/session'
+import { getSessionWithLog } from '../../../_util/sessionLog'
 import { prisma } from '@/lib/prisma'
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   try {
-    const session = await getServerSession()
+    const session = await getSessionWithLog(req, { params: { id } })
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -35,7 +34,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     console.error('activities participants GET error', error)
     return NextResponse.json({ error: 'Failed to fetch participants' }, { status: 500 })
   }
-}
+// 関数区切りのための不要な閉じ波括弧を削除
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
