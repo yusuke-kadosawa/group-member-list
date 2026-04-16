@@ -4,7 +4,7 @@ import { getSessionWithLog } from '../../_util/sessionLog'
 import { prisma } from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: any) {
   const { id } = params
   try {
     const session = await getSessionWithLog(req, { params: { id } })
@@ -64,8 +64,8 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
+export async function PUT(req: NextRequest, { params }: any) {
+  const { id } = params
   try {
     const session = await getSessionWithLog(req, { params: { id } })
     if (!session) {
@@ -126,8 +126,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
+export async function DELETE(req: NextRequest, { params }: any) {
+  const { id } = params
   try {
     const session = await getSessionWithLog(req, { params: { id } })
     if (!session) {
