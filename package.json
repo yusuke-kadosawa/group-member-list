@@ -18,7 +18,7 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
-    "ci:test": "npx prisma db push && npm run prisma:generate && npm run build && start-server-and-test start http://localhost:3000 jest",
+    "ci:test": "npx prisma db push && npm run prisma:generate && npm run build && start-server-and-test start http://localhost:3000 'jest --runInBand'",
     "prisma:studio": "prisma studio",
     "reset": "prisma migrate reset --force --skip-seed",
     "rest": "npm run reset && npm run prisma:generate && npm run build",

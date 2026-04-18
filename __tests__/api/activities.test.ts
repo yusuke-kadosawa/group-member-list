@@ -1,3 +1,4 @@
+import fs from 'fs';
 import request from 'supertest';
 import { prisma } from '@/lib/prisma';
 
@@ -101,6 +102,15 @@ describe('/api/activities API', () => {
       expect(
         res.body.activities.some((activity: any) => activity.id === createdActivityId),
       ).toBe(true);
+      if (!res.body.activities.some((activity) => activity.id === createdActivityId)) {
+        // 失敗時にAPIレスポンスをファイル出力
+        try {
+            fs.writeFileSync('/app/upcoming-debug.json', JSON.stringify(res.body));
+        } catch (e) {
+          // ignore
+        }
+        throw new Error('status=upcoming API response mismatch');
+      }
     });
   });
 
