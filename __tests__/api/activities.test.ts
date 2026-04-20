@@ -47,11 +47,15 @@ describe('/api/activities API', () => {
         .set('Cookie', authCookie)
         .send({ name: 'テスト活動', startedAt: futureDate });
       if (res.status !== 201) {
-        // エラー時にレスポンスbodyを出力
-        // CIではconsole.logがワークフローのログに出る
-        // 必要ならファイル出力も可
+        // エラー時に詳細デバッグ情報を出力
         // eslint-disable-next-line no-console
-        console.log('POST /api/activities error:', res.status, res.body);
+        console.log('POST /api/activities error:', {
+          status: res.status,
+          body: res.body,
+          text: res.text,
+          headers: res.headers,
+          error: res.error,
+        });
       }
       expect(res.status).toBe(201);
       expect(res.body.activity).toBeDefined();
