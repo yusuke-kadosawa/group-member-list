@@ -46,6 +46,13 @@ describe('/api/activities API', () => {
         .post('/api/activities')
         .set('Cookie', authCookie)
         .send({ name: 'テスト活動', startedAt: futureDate });
+      if (res.status !== 201) {
+        // エラー時にレスポンスbodyを出力
+        // CIではconsole.logがワークフローのログに出る
+        // 必要ならファイル出力も可
+        // eslint-disable-next-line no-console
+        console.log('POST /api/activities error:', res.status, res.body);
+      }
       expect(res.status).toBe(201);
       expect(res.body.activity).toBeDefined();
       expect(res.body.activity.name).toBe('テスト活動');
