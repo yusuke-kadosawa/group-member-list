@@ -35,9 +35,9 @@ function validateWhen(whenType: number, when: string): string | null {
 
 export async function GET(
   _req: NextRequest,
-  context: Context
+  { params }: { params: { id: string } }
 ) {
-  const { id } = context.params
+  const { id } = params
   const start = Date.now()
   try {
     const session = await getServerSession()
@@ -73,9 +73,9 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  context: Context
+  { params }: { params: { id: string } }
 ) {
-  const { id } = context.params
+  const { id } = params
   const start = Date.now()
   try {
     const session = await getServerSession()
