@@ -1,3 +1,9 @@
+// --- DB接続確認テスト ---
+describe('環境セットアップ', () => {
+  it('PrismaでDB接続できる', async () => {
+    await expect(prisma.$queryRaw`SELECT 1`).resolves.toBeDefined();
+  });
+});
 import fs from 'fs';
 import request from 'supertest';
 import { prisma } from '@/lib/prisma';
