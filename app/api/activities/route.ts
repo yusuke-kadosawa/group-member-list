@@ -82,6 +82,10 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ activities: formattedActivities })
     } catch (error) {
       console.error('activities GET error', error)
+      if (error instanceof Error) {
+        console.error('stack:', error.stack)
+        if (error.cause) console.error('cause:', error.cause)
+      }
       return NextResponse.json({ error: 'Failed to fetch activities' }, { status: 500 })
     }
   }
@@ -133,6 +137,10 @@ export async function GET(req: NextRequest) {
       }, { status: 201 })
     } catch (error) {
       console.error('activities POST error', error)
+      if (error instanceof Error) {
+        console.error('stack:', error.stack)
+        if (error.cause) console.error('cause:', error.cause)
+      }
       return NextResponse.json({ error: 'Failed to create activity' }, { status: 500 })
     }
 }
