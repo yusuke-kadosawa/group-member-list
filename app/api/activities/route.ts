@@ -110,7 +110,7 @@ export async function GET(req: NextRequest) {
           description,
           startedAt: new Date(startedAt),
           finishedAt: finishedAt ? new Date(finishedAt) : null,
-          placeId
+          placeId: placeId ?? null
         }
       })
 
