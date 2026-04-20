@@ -1,6 +1,13 @@
+
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from '@/lib/session'
 import { prisma } from '@/lib/prisma'
+
+type Context = {
+  params: {
+    id: string;
+  };
+};
 
 /** when フォーマットを whenType に従って検証する */
 function validateWhen(whenType: number, when: string): string | null {
@@ -28,9 +35,9 @@ function validateWhen(whenType: number, when: string): string | null {
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  context: Context
 ) {
-  const { id } = params
+  const { id } = context.params
   const start = Date.now()
   try {
     const session = await getServerSession()
@@ -66,9 +73,9 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: Context
 ) {
-  const { id } = params
+  const { id } = context.params
   const start = Date.now()
   try {
     const session = await getServerSession()
