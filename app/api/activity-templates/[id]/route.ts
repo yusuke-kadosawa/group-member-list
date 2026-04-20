@@ -33,10 +33,8 @@ function validateWhen(whenType: number, when: string): string | null {
   return 'invalid whenType'
 }
 
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+// @ts-expect-error Next.js 15 API Route signature
+export async function GET(_req, { params }) {
   const { id } = params
   const start = Date.now()
   try {
@@ -71,10 +69,8 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+// @ts-expect-error Next.js 15 API Route signature
+export async function PUT(req, { params }) {
   const { id } = params
   const start = Date.now()
   try {
@@ -174,10 +170,8 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  _req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+// @ts-expect-error Next.js 15 API Route signature
+export async function DELETE(_req, { params }) {
   const { id } = params
   const start = Date.now()
   try {

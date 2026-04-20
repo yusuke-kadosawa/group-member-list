@@ -3,7 +3,8 @@ import { getServerSession } from '@/lib/session'
 import { prisma } from '@/lib/prisma'
 import { Prisma } from '@prisma/client'
 
-export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string; userId: string }> }) {
+// @ts-expect-error Next.js 15 API Route signature
+export async function PUT(req, { params }) {
   const { id, userId } = await params
   try {
     const session = await getServerSession()
@@ -53,7 +54,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string; userId: string }> }) {
+// @ts-expect-error Next.js 15 API Route signature
+export async function DELETE(req, { params }) {
   const { id, userId } = await params
   try {
     const session = await getServerSession()

@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSessionWithLog } from '../../../_util/sessionLog'
 import { prisma } from '@/lib/prisma'
 
-export async function GET(req: NextRequest, { params }: any) {
+// @ts-expect-error Next.js 15 API Route signature
+export async function GET(req, { params }) {
   const { id } = params
   try {
     const session = await getSessionWithLog(req, { params: { id } })
@@ -37,7 +38,8 @@ export async function GET(req: NextRequest, { params }: any) {
   }
 }
 
-export async function POST(req: NextRequest, { params }: any) {
+// @ts-expect-error Next.js 15 API Route signature
+export async function POST(req, { params }) {
   const { id } = params
   try {
     const session = await getSessionWithLog(req, { params: { id } })

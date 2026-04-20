@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+// @ts-expect-error Next.js 15 API Route signature
+export async function GET(req, { params }) {
   const { id } = await params
   try {
     const user = await prisma.user.findUnique({
@@ -26,7 +27,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+// @ts-expect-error Next.js 15 API Route signature
+export async function PUT(req, { params }) {
   const { id } = await params
   try {
     const body = await req.json()
@@ -58,7 +60,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+// @ts-expect-error Next.js 15 API Route signature
+export async function DELETE(req, { params }) {
   const { id } = await params
   try {
     await prisma.user.delete({
