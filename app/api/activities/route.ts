@@ -141,6 +141,19 @@ export async function GET(req: NextRequest) {
         console.error('stack:', error.stack)
         if (error.cause) console.error('cause:', error.cause)
       }
+      // 追加: リクエストボディやセッション情報も出力
+      try {
+        const body = await req.json();
+        console.error('POST body:', body);
+      } catch (e) {
+        console.error('POST body parse error:', e);
+      }
+      try {
+        const session = await getSessionWithLog(req);
+        console.error('POST session:', session);
+      } catch (e) {
+        console.error('POST session error:', e);
+      }
       return NextResponse.json({ error: 'Failed to create activity' }, { status: 500 })
     }
 }
