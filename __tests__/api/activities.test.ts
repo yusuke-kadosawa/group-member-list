@@ -63,6 +63,11 @@ describe('/api/activities API', () => {
           error: res.error,
         });
       }
+      if (res.status !== 201) {
+        // エラー時にdebug情報も出力
+        // eslint-disable-next-line no-console
+        console.log('DEBUG:', res.body.debug);
+      }
       expect(res.status).toBe(201);
       expect(res.body.activity).toBeDefined();
       expect(res.body.activity.name).toBe('テスト活動');
@@ -76,6 +81,11 @@ describe('/api/activities API', () => {
         .post('/api/activities')
         .set('Cookie', authCookie)
         .send({ startedAt: futureDate });
+      if (res.status !== 400) {
+        // エラー時にdebug情報も出力
+        // eslint-disable-next-line no-console
+        console.log('DEBUG:', res.body.debug);
+      }
       expect(res.status).toBe(400);
       expect(res.body.error).toBe('name and startedAt are required');
     });
@@ -85,6 +95,11 @@ describe('/api/activities API', () => {
         .post('/api/activities')
         .set('Cookie', authCookie)
         .send({ name: 'テスト活動' });
+      if (res.status !== 400) {
+        // エラー時にdebug情報も出力
+        // eslint-disable-next-line no-console
+        console.log('DEBUG:', res.body.debug);
+      }
       expect(res.status).toBe(400);
       expect(res.body.error).toBe('name and startedAt are required');
     });
