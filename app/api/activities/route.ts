@@ -154,6 +154,28 @@ export async function GET(req: NextRequest) {
       } catch (e) {
         console.error('POST session error:', e);
       }
-      return NextResponse.json({ error: 'Failed to create activity' }, { status: 500 })
+      let debug = {};
+      if (error instanceof Error) {
+        debug = {
+          message: error.message,
+          stack: error.stack,
+          cause: error.cause,
+        };
+      } else {
+        debug = { error: String(error) };
+      }
+      try {
+        const body = await req.json();
+        debug = { ...debug, body };
+      } catch (e) {
+        debug = { ...debug, bodyParseError: String(e) };
+      }
+      try {
+        const session = await getSessionWithLog(req);
+        debug = { ...debug, session };
+      } catch (e) {
+        debug = { ...debug, sessionError: String(e) };
+      }
+      return NextResponse.json({ error: 'Failed to create activity', debug }, { status: 500 })
     }
 }
