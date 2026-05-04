@@ -31,8 +31,8 @@ jobs:
           --health-retries 5
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb
-      APP_URL: http://localhost:3001
-      TEST_BASE_URL: http://localhost:3001
+        APP_URL: http://localhost:3000
+        TEST_BASE_URL: http://localhost:3000
       SMTP_HOST: localhost
       SMTP_PORT: 1026
       SMTP_USER: dummy
@@ -58,7 +58,7 @@ jobs:
       - run: npm run start &
         env:
           NODE_ENV: production
-          PORT: 3001
+            PORT: 3000
       - run: sleep 10
       - run: npm test
         env:

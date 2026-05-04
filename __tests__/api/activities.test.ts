@@ -17,7 +17,7 @@ const TEST_SESSION_TOKEN = 'test-activity-session-token';
 let testUserId: number;
 let createdActivityId: number;
 
-const api = request(process.env.TEST_BASE_URL || 'http://localhost:3001');
+const api = request(process.env.TEST_BASE_URL || 'http://localhost:3000');
 const authCookie = `next-auth.session-token=${TEST_SESSION_TOKEN}`;
 
 describe('/api/activities API', () => {

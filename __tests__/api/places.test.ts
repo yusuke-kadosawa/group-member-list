@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { prisma } from '@/lib/prisma';
 
-const api = request(process.env.TEST_BASE_URL || 'http://localhost:3001');
+const api = request(process.env.TEST_BASE_URL || 'http://localhost:3000');
 
 describe('/api/places API', () => {
   let createdPlaceId: number;
