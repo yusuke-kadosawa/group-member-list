@@ -68,3 +68,9 @@ jobs:
       - name: Show postgres logs after test
         run: |
           docker logs $(docker ps -aqf "ancestor=postgres:15") || true
+      - name: Show all docker logs after test
+        run: |
+          for id in $(docker ps -aq); do
+            echo "===== Logs for container $id ====="
+            docker logs $id || true
+          done

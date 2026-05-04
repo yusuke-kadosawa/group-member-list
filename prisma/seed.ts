@@ -39,8 +39,8 @@ async function main() {
         continue;
       }
       await prisma.place.upsert({
-        where: { latitude_longitude: { latitude, longitude } },
-        update: { name },
+        where: { name },
+        update: { latitude, longitude },
         create: { name, latitude, longitude },
       });
       console.log(`[Place] Upserted: ${name}`);
