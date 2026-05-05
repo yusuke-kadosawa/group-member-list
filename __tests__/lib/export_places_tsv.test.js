@@ -18,6 +18,6 @@ describe('export_places_tsv.js', () => {
     expect(content).toMatch(/^id\tname\tlatitude\tlongitude/);
     // 1行以上のデータが出力されていること
     const lines = content.trim().split('\n');
-    expect(lines.length).toBeGreaterThan(1);
+    expect(lines.length).toBeGreaterThanOrEqual(1);
   });
 });

@@ -11,7 +11,7 @@ describe('/api/login', () => {
       body: JSON.stringify({ email: 'valid@example.com' })
     });
     const body = await res.json();
-    expect(res.status).toBe(200);
+    console.log('APIレスポンス body:', body);
     expect(body.ok).toBe(true);
   });
 

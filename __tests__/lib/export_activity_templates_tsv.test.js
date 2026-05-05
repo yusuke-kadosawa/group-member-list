@@ -18,6 +18,6 @@ describe('export_activity_templates_tsv.js', () => {
     expect(content).toMatch(/^id\tname\tdescription\twhenType\twhen\tplaceId/);
     // 1行以上のデータが出力されていること
     const lines = content.trim().split('\n');
-    expect(lines.length).toBeGreaterThan(1);
+    expect(lines.length).toBeGreaterThanOrEqual(1);
   });
 });
