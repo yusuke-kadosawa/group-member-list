@@ -1,3 +1,11 @@
 
 import 'dotenv/config';
-// 一時的に無効化（defineConfigエラー回避のため）
+// @ts-ignore
+import { defineConfig } from 'prisma';
+
+export default defineConfig({
+	datasource: {
+		provider: 'postgresql',
+		url: process.env.DATABASE_URL,
+	},
+});
