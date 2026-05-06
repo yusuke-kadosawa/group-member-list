@@ -1,3 +1,14 @@
 
+import { defineConfig } from 'prisma/config'
+import { PrismaPg } from '@prisma/adapter-pg'
+import * as dotenv from 'dotenv'
 
-// prisma.config.tsは不要なため空ファイル化
+dotenv.config()
+
+export default defineConfig({
+  migrate: {
+    async adapter(env) {
+      return new PrismaPg({ connectionString: env.DATABASE_URL })
+    },
+  },
+})
