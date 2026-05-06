@@ -1,3 +1,10 @@
+// --- DB接続確認テスト ---
+describe('環境セットアップ', () => {
+  it('PrismaでDB接続できる', async () => {
+    await expect(prisma.$queryRaw`SELECT 1`).resolves.toBeDefined();
+  });
+});
+import fs from 'fs';
 import request from 'supertest';
 import { prisma } from '@/lib/prisma';
 
@@ -10,7 +17,7 @@ const TEST_SESSION_TOKEN = 'test-activity-session-token';
 let testUserId: number;
 let createdActivityId: number;
 
-const api = request(process.env.TEST_BASE_URL || 'http://localhost:3001');
+const api = request(process.env.TEST_BASE_URL || 'http://localhost:3000');
 const authCookie = `next-auth.session-token=${TEST_SESSION_TOKEN}`;
 
 describe('/api/activities API', () => {
@@ -45,6 +52,22 @@ describe('/api/activities API', () => {
         .post('/api/activities')
         .set('Cookie', authCookie)
         .send({ name: 'テスト活動', startedAt: futureDate });
+      if (res.status !== 201) {
+        // エラー時に詳細デバッグ情報を出力
+        // eslint-disable-next-line no-console
+        console.log('POST /api/activities error:', {
+          status: res.status,
+          body: res.body,
+          text: res.text,
+          headers: res.headers,
+          error: res.error,
+        });
+      }
+      if (res.status !== 201) {
+        // エラー時にdebug情報も出力
+        // eslint-disable-next-line no-console
+        console.log('DEBUG:', res.body.debug);
+      }
       expect(res.status).toBe(201);
       expect(res.body.activity).toBeDefined();
       expect(res.body.activity.name).toBe('テスト活動');
@@ -58,6 +81,11 @@ describe('/api/activities API', () => {
         .post('/api/activities')
         .set('Cookie', authCookie)
         .send({ startedAt: futureDate });
+      if (res.status !== 400) {
+        // エラー時にdebug情報も出力
+        // eslint-disable-next-line no-console
+        console.log('DEBUG:', res.body.debug);
+      }
       expect(res.status).toBe(400);
       expect(res.body.error).toBe('name and startedAt are required');
     });
@@ -67,6 +95,11 @@ describe('/api/activities API', () => {
         .post('/api/activities')
         .set('Cookie', authCookie)
         .send({ name: 'テスト活動' });
+      if (res.status !== 400) {
+        // エラー時にdebug情報も出力
+        // eslint-disable-next-line no-console
+        console.log('DEBUG:', res.body.debug);
+      }
       expect(res.status).toBe(400);
       expect(res.body.error).toBe('name and startedAt are required');
     });
@@ -101,6 +134,15 @@ describe('/api/activities API', () => {
       expect(
         res.body.activities.some((activity: any) => activity.id === createdActivityId),
       ).toBe(true);
+      if (!res.body.activities.some((activity) => activity.id === createdActivityId)) {
+        // 失敗時にAPIレスポンスをファイル出力
+        try {
+            fs.writeFileSync('/app/upcoming-debug.json', JSON.stringify(res.body));
+        } catch (e) {
+          // ignore
+        }
+        throw new Error('status=upcoming API response mismatch');
+      }
     });
   });
 

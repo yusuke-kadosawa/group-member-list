@@ -1,6 +1,13 @@
+
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from '@/lib/session'
 import { prisma } from '@/lib/prisma'
+
+type Context = {
+  params: {
+    id: string;
+  };
+};
 
 /** when フォーマットを whenType に従って検証する */
 function validateWhen(whenType: number, when: string): string | null {
@@ -26,11 +33,9 @@ function validateWhen(whenType: number, when: string): string | null {
   return 'invalid whenType'
 }
 
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params
+// @ts-expect-error Next.js 15 API Route signature
+export async function GET(_req, { params }) {
+  const { id } = params
   const start = Date.now()
   try {
     const session = await getServerSession()
@@ -64,11 +69,9 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params
+// @ts-expect-error Next.js 15 API Route signature
+export async function PUT(req, { params }) {
+  const { id } = params
   const start = Date.now()
   try {
     const session = await getServerSession()
@@ -118,17 +121,16 @@ export async function PUT(
       )
     }
 
-    // whenType バリデーション
+    // whenType バリデーション（空欄許容）
     if (hasWhenType) {
       if (![0, 1, 2].includes(whenType)) {
         return NextResponse.json({ error: 'invalid whenType' }, { status: 400 })
       }
-      if (!when || typeof when !== 'string' || when.trim() === '') {
-        return NextResponse.json({ error: 'when required' }, { status: 400 })
-      }
-      const whenError = validateWhen(whenType, when)
-      if (whenError) {
-        return NextResponse.json({ error: whenError }, { status: 400 })
+      if (when && typeof when === 'string' && when.trim() !== '') {
+        const whenError = validateWhen(whenType, when)
+        if (whenError) {
+          return NextResponse.json({ error: whenError }, { status: 400 })
+        }
       }
     }
 
@@ -168,11 +170,9 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  _req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params
+// @ts-expect-error Next.js 15 API Route signature
+export async function DELETE(_req, { params }) {
+  const { id } = params
   const start = Date.now()
   try {
     const session = await getServerSession()

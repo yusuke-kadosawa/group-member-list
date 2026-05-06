@@ -32,7 +32,7 @@ describe('/api/groups API', () => {
     await prisma.user.deleteMany({ where: { email: TEST_USER.email } });
   });
 
-  const api = request(process.env.TEST_BASE_URL || 'http://localhost:3001');
+  const api = request(process.env.TEST_BASE_URL || 'http://localhost:3000');
 
   it('GET /api/groups でグループ一覧が取得できる', async () => {
     const res = await api

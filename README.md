@@ -1,4 +1,16 @@
+## CI用PostgreSQLユーザー設定
+
+CIやローカルテストでは、DBユーザーは `postgres` を利用してください。
+`root` ユーザーは存在しないため、DATABASE_URL等の設定例も `postgres` ユーザーに統一してください。
+
 # Group Member List
+
+**推奨バージョン**
+
+- Node.js: 24.x
+- Prisma: 7.4.1
+
+このプロジェクトは Node.js 24系および Prisma 7.4.1 での動作を前提としています。
 
 Next.js で構築されたグループメンバー管理アプリケーションです。
 

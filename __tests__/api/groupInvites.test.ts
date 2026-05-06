@@ -10,7 +10,7 @@ const TEST_USER = {
 const TEST_SESSION_TOKEN = 'test-group-invites-session-token';
 let testGroupId: number;
 
-const api = request(process.env.TEST_BASE_URL || 'http://localhost:3001');
+const api = request(process.env.TEST_BASE_URL || 'http://localhost:3000');
 const authCookie = `next-auth.session-token=${TEST_SESSION_TOKEN}`;
 
 describe('/api/groups/[id]/invites API', () => {

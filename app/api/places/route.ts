@@ -18,7 +18,17 @@ export async function GET() {
     console.error('/api/places error', e)
     const duration = Date.now() - start
     console.log(`[places] GET failed in ${duration}ms`)
-    return NextResponse.json({ error: 'server error' }, { status: 500 })
+    let debug = {};
+    if (e instanceof Error) {
+      debug = {
+        message: e.message,
+        stack: e.stack,
+        cause: e.cause,
+      };
+    } else {
+      debug = { error: String(e) };
+    }
+    return NextResponse.json({ error: 'server error', debug }, { status: 500 })
   }
 }
 
@@ -70,6 +80,22 @@ export async function POST(request: NextRequest) {
     console.error('/api/places POST error', e)
     const duration = Date.now() - start
     console.log(`[places] POST failed in ${duration}ms`)
-    return NextResponse.json({ error: 'server error' }, { status: 500 })
+    let debug = {};
+    if (e instanceof Error) {
+      debug = {
+        message: e.message,
+        stack: e.stack,
+        cause: e.cause,
+      };
+    } else {
+      debug = { error: String(e) };
+    }
+    try {
+      const body = await request.json();
+      debug = { ...debug, body };
+    } catch (err) {
+      debug = { ...debug, bodyParseError: String(err) };
+    }
+    return NextResponse.json({ error: 'server error', debug }, { status: 500 })
   }
 }

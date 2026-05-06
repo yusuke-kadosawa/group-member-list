@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic"
 import { requireAuth } from "@/lib/auth"
 import LogoutButton from "@/app/components/LogoutButton"
 import { cookies } from "next/headers"

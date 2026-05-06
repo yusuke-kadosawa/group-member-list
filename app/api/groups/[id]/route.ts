@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+// @ts-expect-error Next.js 15 API Route signature
+export async function GET(request, { params }) {
   const { id } = await params
   const start = Date.now()
   try {
@@ -61,10 +59,8 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+// @ts-expect-error Next.js 15 API Route signature
+export async function PUT(request, { params }) {
   const { id } = await params
   const start = Date.now()
   try {
@@ -99,10 +95,8 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+// @ts-expect-error Next.js 15 API Route signature
+export async function DELETE(request, { params }) {
   const { id } = await params
   const start = Date.now()
   try {

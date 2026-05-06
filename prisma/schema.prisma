@@ -33,7 +33,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 enum AuthType {
@@ -111,7 +110,7 @@ model GroupUser {
 
 model Place {
   id        Int      @id @default(autoincrement())
-  name      String
+  name      String   @unique
   latitude  Float?
   longitude Float?
   createdAt DateTime @default(now())
@@ -129,7 +128,7 @@ model ActivityTemplate {
   name        String
   description String?
   whenType    Int
-  when        String
+  when        String?
   placeId     Int?
 
   place Place? @relation(fields: [placeId], references: [id])

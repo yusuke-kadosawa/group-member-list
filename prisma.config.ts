@@ -1,3 +1,8 @@
+import "dotenv/config"
+import { defineConfig } from 'prisma/config'
 
-import 'dotenv/config';
-// 一時的に無効化（defineConfigエラー回避のため）
+export default defineConfig({
+  datasource: {
+    url: process.env.DATABASE_URL!,
+  },
+})

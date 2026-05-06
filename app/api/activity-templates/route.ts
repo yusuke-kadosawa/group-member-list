@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'invalid whenType' }, { status: 400 })
     }
 
-    // when バリデーション
+    // when バリデーション（必須）
     if (!when || typeof when !== 'string' || when.trim() === '') {
       return NextResponse.json({ error: 'when required' }, { status: 400 })
     }

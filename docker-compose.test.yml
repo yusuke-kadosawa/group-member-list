@@ -6,7 +6,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: testdb
     ports:
-      - "5432:5432"
+      - "15432:5432"
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres"]
       interval: 10s
@@ -29,12 +29,13 @@ services:
       context: .
       dockerfile: Dockerfile.test
     ports:
-      - "3001:3000"
+      - "3000:3000"
     environment:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/testdb
-      APP_URL: http://localhost:3001
+      APP_URL: http://app:3000
+      TEST_BASE_URL: http://app:3000
       NODE_ENV: production
-      PORT: 3001
+      PORT: 3000
       SMTP_HOST: maildev
       SMTP_PORT: 1026
       SMTP_USER: dummy
@@ -48,6 +49,7 @@ services:
         condition: service_healthy
     command: >
       sh -c "
-        npx prisma db push &&
-        npm run start
+        npx prisma db push --accept-data-loss &&
+        npm run build &&
+        npx start-server-and-test start http://localhost:3000 ci:test
       "

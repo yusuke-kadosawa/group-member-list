@@ -4,7 +4,9 @@ dotenv.config({ path: '.env.test' });
 
 // テスト開始時にDB初期化
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const { PrismaPg } = require('@prisma/adapter-pg');
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+const prisma = new PrismaClient({ adapter });
 
 beforeAll(async () => {
   // テーブル名は必要に応じて追加

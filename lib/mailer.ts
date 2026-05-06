@@ -7,10 +7,10 @@ import nodemailer from 'nodemailer'
  */
 export function createMailTransporter() {
   if (process.env.NODE_ENV === 'development') {
-    // 開発環境: MailDev
+    // 開発環境: MailDev（環境変数が設定されていればそちらを優先）
     return nodemailer.createTransport({
-      host: 'localhost',
-      port: 1025,
+      host: process.env.SMTP_HOST || 'localhost',
+      port: parseInt(process.env.SMTP_PORT || '1025'),
       secure: false,
       ignoreTLS: true,
     })

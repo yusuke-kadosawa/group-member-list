@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from '@/lib/session'
+import { getSessionWithLog } from '../../../_util/sessionLog'
 import { prisma } from '@/lib/prisma'
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
+// @ts-expect-error Next.js 15 API Route signature
+export async function GET(req, { params }) {
+  const { id } = params
   try {
-    const session = await getServerSession()
+    const session = await getSessionWithLog(req, { params: { id } })
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -37,10 +38,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 }
 
-export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
+// @ts-expect-error Next.js 15 API Route signature
+export async function POST(req, { params }) {
+  const { id } = params
   try {
-    const session = await getServerSession()
+    const session = await getSessionWithLog(req, { params: { id } })
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }

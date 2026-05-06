@@ -11,8 +11,8 @@ set +a
 docker compose -f docker-compose.test.yml up -d --build
 
 
-# appサービス（Next.js）が3001で起動するのを待つ
-npx wait-on http://localhost:3001
+# appサービス（Next.js）が3000で起動するのを待つ
+npx wait-on http://localhost:3000
 
 
 # DBスキーマ反映・シード投入
