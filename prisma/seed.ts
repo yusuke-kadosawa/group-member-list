@@ -3,6 +3,7 @@
 // TSVファイルからPlaceテーブルにデータをインポートするスクリプト
 
 import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
@@ -15,7 +16,8 @@ const __dirname = path.dirname(__filename);
 // .env（CIのDATABASE_URL）を優先して読み込む
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
-const prisma = new PrismaClient();
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   // Placeシード（従来通り）
