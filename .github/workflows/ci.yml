@@ -50,9 +50,8 @@ jobs:
       - name: Show postgres logs before test
         run: |
           docker logs $(docker ps -aqf "ancestor=postgres:15") || true
-      # prisma db push だけでは seed は自動実行されないため、明示的にシードを実行する（Prisma v4.16未満）
+      # npm test 内で db:seed が実行されるため、ここでは db push のみ
       - run: npx prisma db push
-      - run: npm run db:seed
       - run: npm run build
         env:
           NODE_ENV: production
