@@ -6,7 +6,11 @@ import { PrismaClient } from '@prisma/client';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
+import { fileURLToPath } from 'url';
 import { parseTsvWithMultiline } from './tsv-parse';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // .env（CIのDATABASE_URL）を優先して読み込む
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
