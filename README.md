@@ -1,3 +1,7 @@
+## CI用PostgreSQLユーザー設定
+
+CIやローカルテストでは、DBユーザーは `postgres` を利用してください。
+`root` ユーザーは存在しないため、DATABASE_URL等の設定例も `postgres` ユーザーに統一してください。
 
 # Group Member List
 

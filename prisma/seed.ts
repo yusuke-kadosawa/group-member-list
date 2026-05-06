@@ -1,3 +1,4 @@
+
 #!/usr/bin/env tsx
 // prisma/seed.ts
 // TSVファイルからPlaceテーブルにデータをインポートするスクリプト
