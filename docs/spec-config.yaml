@@ -1,0 +1,33 @@
+# openspec 運用方針・仕様管理設定
+
+api:
+  format: openapi
+  file: api.yml
+  description: |
+    REST API仕様はOpenAPI (YAML) 形式で管理し、
+    ドキュメント・型定義・テスト・モック自動生成に活用する。
+  tools:
+    - swagger-ui
+    - openapi-generator
+    - prism (mock server)
+    - stoplight
+
+ui:
+  format: markdown
+  dir: ./
+  include:
+    - "**/*.md"
+    - "**/*.yml"
+  description: |
+    画面仕様・業務要件・ユースケース・非機能要件などは
+    Markdown/YAMLで柔軟に管理する。
+  tools:
+    - typora
+    - markmap
+    - draw.io
+
+common:
+  model-sharing: true
+  notes: |
+    - APIモデル定義と画面・業務要件の間で型や用語の共通化を推進する。
+    - 必要に応じてOpenAPIのcomponentsや共通YAMLを参照する。
