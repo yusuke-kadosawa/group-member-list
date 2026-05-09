@@ -1,7 +1,7 @@
 import { requireAuth } from '@/lib/auth'
 import Link from 'next/link'
-import Layout from '@/app/components/Layout'
-import ActivityTemplateForm from '@/app/components/ActivityTemplateForm'
+import Layout from '@/components/Layout'
+import ActivityTemplateForm from '@/components/ActivityTemplateForm'
 
 export default async function NewActivityTemplatePage() {
   const session = await requireAuth()

@@ -1,7 +1,7 @@
 import { requireAuth } from "@/lib/auth"
 import Link from "next/link"
-import PlaceForm from "@/app/components/PlaceForm"
-import Layout from "@/app/components/Layout"
+import PlaceForm from "@/components/PlaceForm"
+import Layout from "@/components/Layout"
 
 export default async function NewPlacePage() {
   const session = await requireAuth()

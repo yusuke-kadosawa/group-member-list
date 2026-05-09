@@ -1,13 +1,12 @@
-import React from "react";
-import { useParams } from "next/navigation";
+import { requireAuth } from "@/lib/auth";
+import Layout from "@/components/Layout";
+import CalendarMonthView from "@/activities/calendar/CalendarMonthView";
 
-export default function CalendarMonthPage() {
-  // パラメータ取得
-  // const { year, month } = useParams(); // サーバーコンポーネントでは props で受け取る
+export default async function CalendarMonthPage() {
+  const session = await requireAuth();
   return (
-    <div>
-      <h1>月カレンダー（パス指定）</h1>
-      {/* TODO: カレンダーUI・活動表示 */}
-    </div>
+    <Layout session={session} headerTitle="月カレンダー">
+      <CalendarMonthView />
+    </Layout>
   );
 }

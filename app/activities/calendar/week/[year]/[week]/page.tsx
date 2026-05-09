@@ -1,13 +1,12 @@
-import React from "react";
-import { useParams } from "next/navigation";
+import { requireAuth } from "@/lib/auth";
+import Layout from "@/components/Layout";
+import CalendarWeekView from "@/activities/calendar/CalendarWeekView";
 
-export default function CalendarWeekPage() {
-  // パラメータ取得
-  // const { year, week } = useParams();
+export default async function CalendarWeekPage() {
+  const session = await requireAuth();
   return (
-    <div>
-      <h1>週カレンダー（パス指定）</h1>
-      {/* TODO: カレンダーUI・活動表示 */}
-    </div>
+    <Layout session={session} headerTitle="週カレンダー">
+      <CalendarWeekView />
+    </Layout>
   );
 }

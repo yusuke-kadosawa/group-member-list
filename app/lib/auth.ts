@@ -1,4 +1,4 @@
-import { getSession } from "@/session"
+import { getSession } from "@/lib/session"
 import { redirect } from "next/navigation"
 
 /**
@@ -9,10 +9,10 @@ import { redirect } from "next/navigation"
  */
 export async function requireAuth(redirectTo: string = "/") {
   const session = await getSession()
-  
+
   if (!session) {
     redirect(redirectTo)
   }
-  
+
   return session
 }

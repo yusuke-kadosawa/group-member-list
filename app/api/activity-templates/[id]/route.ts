@@ -1,7 +1,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from '@/lib/session'
-import { prisma } from '@/lib/prisma'
+import { prisma } from '@/prisma'
 
 type Context = {
   params: {

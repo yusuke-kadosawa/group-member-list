@@ -1,5 +1,5 @@
 import { requireAuth } from "@/lib/auth"
-import Layout from "@/app/components/Layout"
+import Layout from "@/components/Layout"
 import NewActivityForm from "./NewActivityForm"
 
 export default async function NewActivityPage() {

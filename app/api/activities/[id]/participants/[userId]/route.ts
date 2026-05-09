@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from '@/lib/session'
-import { prisma } from '@/lib/prisma'
+import { prisma } from '@/prisma'
 import { Prisma } from '@prisma/client'
 
 // @ts-expect-error Next.js 15 API Route signature

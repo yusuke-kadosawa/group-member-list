@@ -1,7 +1,7 @@
 "use client"
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { MESSAGES } from "@/app/constants/messages";
+import { MESSAGES } from "@/constants/messages";
 
 type Props = {
   dbAvailable: boolean

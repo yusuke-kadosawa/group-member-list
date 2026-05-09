@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from '@/lib/session'
-import { prisma } from '@/lib/prisma'
+import { prisma } from '@/prisma'
 
 /** when フォーマットを whenType に従って検証する */
 function validateWhen(whenType: number, when: string): string | null {

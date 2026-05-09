@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { prisma } from '@/prisma'
 import { randomUUID } from 'crypto'
-import { sendEmail } from '@/lib/mailer'
+import { sendEmail } from '@/mailer'
 
 /**
  * 認証メール本文を作成する

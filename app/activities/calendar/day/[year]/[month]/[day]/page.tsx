@@ -1,13 +1,12 @@
-import React from "react";
-import { useParams } from "next/navigation";
+import { requireAuth } from "@/lib/auth";
+import Layout from "@/components/Layout";
+import CalendarDayView from "@/activities/calendar/CalendarDayView";
 
-export default function CalendarDayPage() {
-  // パラメータ取得
-  // const { year, month, day } = useParams();
+export default async function CalendarDayPage() {
+  const session = await requireAuth();
   return (
-    <div>
-      <h1>日カレンダー（パス指定）</h1>
-      {/* TODO: カレンダーUI・活動表示 */}
-    </div>
+    <Layout session={session} headerTitle="日カレンダー">
+      <CalendarDayView />
+    </Layout>
   );
 }

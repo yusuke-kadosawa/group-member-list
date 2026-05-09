@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { MESSAGES } from "@/app/constants/messages";
+import { MESSAGES } from "@/constants/messages";
 
 const RESEND_COOLDOWN_MS = 3000; // 再送信クールダウン時間（ミリ秒）
 

@@ -1,6 +1,6 @@
 "use client"
 import React from "react"
-import PlaceMap from "@/app/components/PlaceMap"
+import PlaceMap from "@/components/PlaceMap"
 
 export type PlaceMapWrapperProps = {
   latitude: number

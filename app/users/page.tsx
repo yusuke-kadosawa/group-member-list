@@ -1,5 +1,5 @@
 import { requireAuth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@/prisma"
 import Link from "next/link"
 import Layout from "../components/Layout"
 import UserList from "../components/UserList"

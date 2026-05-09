@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSessionWithLog } from '../_util/sessionLog'
-import { prisma } from '@/lib/prisma'
+import { prisma } from '@/prisma'
 
 export async function GET(req: NextRequest) {
   try {

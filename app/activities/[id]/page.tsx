@@ -1,6 +1,6 @@
 import { requireAuth } from "@/lib/auth"
 import { notFound } from "next/navigation"
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@/prisma"
 import Layout from "../../components/Layout"
 import Link from "next/link"
 

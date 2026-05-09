@@ -1,7 +1,7 @@
 import { requireAuth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@/prisma"
 import Link from "next/link"
-import GroupList from "@/app/components/GroupList"
+import GroupList from "@/components/GroupList"
 import Layout from "../components/Layout"
 
 export default async function GroupsPage() {

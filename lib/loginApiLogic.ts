@@ -1,6 +1,6 @@
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/prisma';
 import { randomUUID } from 'crypto';
-import { sendEmail } from '@/lib/mailer';
+import { sendEmail } from '@/mailer';
 
 export async function loginApiLogic(email: string, baseUrl: string = 'http://localhost:3000') {
   if (!email || typeof email !== 'string') {
