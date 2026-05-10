@@ -1,9 +1,9 @@
 import { requireAuth } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
+import { prisma } from '@/prisma'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import Layout from '@/app/components/Layout'
-import ActivityTemplateForm from '@/app/components/ActivityTemplateForm'
+import Layout from '@/components/Layout'
+import ActivityTemplateForm from '@/components/ActivityTemplateForm'
 
 export default async function EditActivityTemplatePage({
   params,

@@ -1,8 +1,8 @@
 export const dynamic = "force-dynamic"
 import { requireAuth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@/prisma"
 import Link from "next/link"
-import PlacesSection from "@/app/components/PlacesSection"
+import PlacesSection from "@/components/PlacesSection"
 import Layout from "../components/Layout"
 
 export default async function PlacesPage() {

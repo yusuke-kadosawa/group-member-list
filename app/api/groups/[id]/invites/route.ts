@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from '@/lib/session'
-import { prisma } from '@/lib/prisma'
+import { prisma } from '@/prisma'
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession()

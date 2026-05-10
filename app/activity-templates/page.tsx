@@ -1,8 +1,8 @@
 export const dynamic = "force-dynamic"
 import { requireAuth } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
+import { prisma } from '@/prisma'
 import Link from 'next/link'
-import Layout from '@/app/components/Layout'
+import Layout from '@/components/Layout'
 
 const WHEN_TYPE_LABEL = ['日付', '曜日', '時刻'] as const
 

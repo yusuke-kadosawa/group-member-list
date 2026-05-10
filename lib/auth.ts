@@ -1,4 +1,4 @@
-import { getSession } from "@/lib/session"
+import { getSession } from "@/session"
 import { redirect } from "next/navigation"
 
 /**

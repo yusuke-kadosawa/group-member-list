@@ -29,6 +29,10 @@
   "dependencies": {
     "@prisma/adapter-pg": "7.8.0",
     "@prisma/client": "7.8.0",
+    "@fullcalendar/react": "^6.1.13",
+    "@fullcalendar/daygrid": "^6.1.13",
+    "@fullcalendar/timegrid": "^6.1.13",
+    "@fullcalendar/interaction": "^6.1.13",
     "dotenv": "^16.6.1",
     "leaflet": "^1.9.4",
     "next": "^15.5.12",

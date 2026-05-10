@@ -1,9 +1,9 @@
 import { requireAuth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@/prisma"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import PlaceForm from "@/app/components/PlaceForm"
-import Layout from "@/app/components/Layout"
+import PlaceForm from "@/components/PlaceForm"
+import Layout from "@/components/Layout"
 
 export default async function EditPlacePage({
   params,

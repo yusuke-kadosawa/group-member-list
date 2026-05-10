@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { sendGroupInviteMail } from '@/lib/mailer'
+import { prisma } from '@/prisma'
+import { sendGroupInviteMail } from '@/mailer'
 import { randomUUID } from 'crypto'
 import { requireAuth } from '@/lib/auth'
 

@@ -1,9 +1,9 @@
 import { requireAuth } from "@/lib/auth"
 import { notFound } from "next/navigation"
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@/prisma"
 import Link from "next/link"
-import GroupForm from "@/app/components/GroupForm"
-import Layout from "@/app/components/Layout"
+import GroupForm from "@/components/GroupForm"
+import Layout from "@/components/Layout"
 
 export default async function EditGroupPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

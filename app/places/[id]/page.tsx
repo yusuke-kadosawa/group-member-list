@@ -1,10 +1,10 @@
 import { requireAuth } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@/prisma"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 
-import Layout from "@/app/components/Layout"
-import PlaceMapWrapper from "@/app/components/PlaceMapWrapper"
+import Layout from "@/components/Layout"
+import PlaceMapWrapper from "@/components/PlaceMapWrapper"
 
 export default async function PlaceDetailPage({
   params,

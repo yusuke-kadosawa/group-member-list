@@ -1,13 +1,13 @@
 export const dynamic = "force-dynamic"
 import { requireAuth } from "@/lib/auth"
-import LogoutButton from "@/app/components/LogoutButton"
+import LogoutButton from "@/components/LogoutButton"
 import { cookies } from "next/headers"
-import { prisma } from "@/lib/prisma"
+import { prisma } from "@/prisma"
 import Link from "next/link"
 import NavigationItem from "../components/NavigationItem"
 import Layout from "../components/Layout"
 
-import { logRenderDuration } from "@/lib/logging"
+import { logRenderDuration } from "@/logging"
 import { redirect } from "next/navigation"
 
 export default async function Home() {

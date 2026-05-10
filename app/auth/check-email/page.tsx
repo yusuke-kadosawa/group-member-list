@@ -1,4 +1,4 @@
-import { MESSAGES } from "@/app/constants/messages";
+import { MESSAGES } from "@/constants/messages";
 
 export default function CheckEmail() {
   return (

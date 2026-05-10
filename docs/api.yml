@@ -1,0 +1,1611 @@
+              /api/resend-email:
+                post:
+                  summary: 認証メール再送
+                  description: 有効な認証トークンが存在する場合、有効期限を延長して再送信
+                  requestBody:
+                    required: true
+                    content:
+                      application/json:
+                        schema:
+                          type: object
+                          properties:
+                            email:
+                              type: string
+                              format: email
+                              description: 再送対象メールアドレス
+                          required:
+                            - email
+                  responses:
+                    '200':
+                      description: 再送成功
+                    '400':
+                      description: トークンが存在しない、またはバリデーションエラー
+                    '500':
+                      description: サーバーエラー
+                  tags:
+                    - Auth
+            /api/auth/verify:
+              get:
+                summary: メールリンク認証確定
+                description: メールで送信された認証リンクからアクセスし、セッションを発行
+                parameters:
+                  - in: query
+                    name: token
+                    required: true
+                    schema:
+                      type: string
+                    description: 認証トークン
+                responses:
+                  '302':
+                    description: 認証成功時は /home へリダイレクトし、セッションクッキーを付与
+                    headers:
+                      Set-Cookie:
+                        schema:
+                          type: string
+                        description: next-auth.session-token=<token>; Path=/; HttpOnly; SameSite=Lax
+                      Location:
+                        schema:
+                          type: string
+                        description: /home
+                  '400':
+                    description: トークン不正または期限切れ
+                  '500':
+                    description: サーバーエラー
+                tags:
+                  - Auth
+          /api/users:
+            get:
+              summary: ユーザー一覧取得
+              description: 登録されているユーザーの一覧を取得
+              parameters:
+                - in: header
+                  name: Cookie
+                  required: true
+                  schema:
+                    type: string
+                  description: next-auth.session-token=<token>
+              responses:
+                '200':
+                  description: ユーザー一覧取得成功
+                  content:
+                    application/json:
+                      schema:
+                        type: object
+                        properties:
+                          users:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/User'
+              tags:
+                - Users
+            post:
+              summary: ユーザー新規作成
+              description: 新しいユーザーを作成
+              parameters:
+                - in: header
+                  name: Cookie
+                  required: true
+                  schema:
+                    type: string
+                  description: next-auth.session-token=<token>
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: ユーザー名
+                        email:
+                          type: string
+                          format: email
+                          description: メールアドレス
+                      required:
+                        - name
+                        - email
+              responses:
+                '200':
+                  description: ユーザー作成成功
+                  content:
+                    application/json:
+                      schema:
+                        type: object
+                        properties:
+                          user:
+                            $ref: '#/components/schemas/User'
+                '400':
+                  description: バリデーションエラー
+              tags:
+                - Users
+            User:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                email:
+                  type: string
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+        /api/activities/{id}/participants:
+          get:
+            summary: 活動参加者一覧取得
+            description: 指定した活動の参加者一覧を取得
+            parameters:
+              - in: path
+                name: id
+                required: true
+                schema:
+                  type: integer
+                description: 活動ID
+              - in: header
+                name: Cookie
+                required: true
+                schema:
+                  type: string
+                description: next-auth.session-token=<token>
+            responses:
+              '200':
+                description: 参加者一覧取得成功
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        participants:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/Participant'
+              '400':
+                description: パラメータ不正
+              '404':
+                description: 活動が存在しない
+            tags:
+              - ActivityParticipants
+          post:
+            summary: 活動参加者追加
+            description: 指定した活動に参加者を追加
+            parameters:
+              - in: path
+                name: id
+                required: true
+                schema:
+                  type: integer
+                description: 活動ID
+              - in: header
+                name: Cookie
+                required: true
+                schema:
+                  type: string
+                description: next-auth.session-token=<token>
+            requestBody:
+              required: true
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      userId:
+                        type: integer
+                        description: ユーザーID
+                      status:
+                        type: integer
+                        description: 参加ステータス（0: pending, 1: confirmed, 2: declined）
+                    required:
+                      - userId
+            responses:
+              '201':
+                description: 参加者追加成功
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        participant:
+                          $ref: '#/components/schemas/Participant'
+              '400':
+                description: バリデーションエラー
+              '409':
+                description: 既に参加済み
+            tags:
+              - ActivityParticipants
+        /api/activities/{id}/participants/{userId}:
+          put:
+            summary: 活動参加者ステータス更新
+            description: 指定した活動の参加者ステータスを更新
+            parameters:
+              - in: path
+                name: id
+                required: true
+                schema:
+                  type: integer
+                description: 活動ID
+              - in: path
+                name: userId
+                required: true
+                schema:
+                  type: integer
+                description: ユーザーID
+              - in: header
+                name: Cookie
+                required: true
+                schema:
+                  type: string
+                description: next-auth.session-token=<token>
+            requestBody:
+              required: true
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      status:
+                        type: integer
+                        description: 参加ステータス（0: pending, 1: confirmed, 2: declined）
+                    required:
+                      - status
+            responses:
+              '200':
+                description: 参加者ステータス更新成功
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        participant:
+                          type: object
+                          properties:
+                            userId:
+                              type: integer
+                            status:
+                              type: integer
+                            updatedAt:
+                              type: string
+                              format: date-time
+              '400':
+                description: バリデーションエラー
+              '404':
+                description: 参加者が存在しない
+            tags:
+              - ActivityParticipants
+          delete:
+            summary: 活動参加者削除
+            description: 指定した活動から参加者を削除
+            parameters:
+              - in: path
+                name: id
+                required: true
+                schema:
+                  type: integer
+                description: 活動ID
+              - in: path
+                name: userId
+                required: true
+                schema:
+                  type: integer
+                description: ユーザーID
+              - in: header
+                name: Cookie
+                required: true
+                schema:
+                  type: string
+                description: next-auth.session-token=<token>
+            responses:
+              '200':
+                description: 参加者削除成功
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        ok:
+                          type: boolean
+              '404':
+                description: 参加者が存在しない
+            tags:
+              - ActivityParticipants
+          Participant:
+            type: object
+            properties:
+              userId:
+                type: integer
+              name:
+                type: string
+              email:
+                type: string
+              status:
+                type: integer
+                description: 参加ステータス（0: pending, 1: confirmed, 2: declined）
+              joinedAt:
+                type: string
+                format: date-time
+      /api/activity-templates:
+        get:
+          summary: 活動テンプレート一覧取得
+          description: 登録されている活動テンプレートの一覧を取得
+          parameters:
+            - in: header
+              name: Cookie
+              required: true
+              schema:
+                type: string
+              description: next-auth.session-token=<token>
+            - in: query
+              name: placeId
+              required: false
+              schema:
+                type: integer
+              description: 場所IDでフィルタ
+          responses:
+            '200':
+              description: 活動テンプレート一覧取得成功
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      activityTemplates:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ActivityTemplate'
+          tags:
+            - ActivityTemplates
+        post:
+          summary: 活動テンプレート新規作成
+          description: 新しい活動テンプレートを作成
+          parameters:
+            - in: header
+              name: Cookie
+              required: true
+              schema:
+                type: string
+              description: next-auth.session-token=<token>
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      description: テンプレート名
+                    description:
+                      type: string
+                      description: 説明
+                    whenType:
+                      type: integer
+                      description: when種別（0:日付, 1:曜日, 2:時刻）
+                    when:
+                      type: string
+                      description: when値
+                    placeId:
+                      type: integer
+                      description: 場所ID
+                  required:
+                    - name
+                    - whenType
+                    - when
+          responses:
+            '201':
+              description: テンプレート作成成功
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      activityTemplate:
+                        $ref: '#/components/schemas/ActivityTemplate'
+            '400':
+              description: バリデーションエラー
+          tags:
+            - ActivityTemplates
+      /api/activity-templates/{id}:
+        get:
+          summary: 活動テンプレート取得
+          description: 指定した活動テンプレートを取得
+          parameters:
+            - in: path
+              name: id
+              required: true
+              schema:
+                type: integer
+              description: テンプレートID
+            - in: header
+              name: Cookie
+              required: true
+              schema:
+                type: string
+              description: next-auth.session-token=<token>
+          responses:
+            '200':
+              description: テンプレート取得成功
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      activityTemplate:
+                        $ref: '#/components/schemas/ActivityTemplate'
+            '400':
+              description: パラメータ不正
+            '404':
+              description: テンプレートが存在しない
+          tags:
+            - ActivityTemplates
+        put:
+          summary: 活動テンプレート更新
+          description: 指定した活動テンプレートを更新
+          parameters:
+            - in: path
+              name: id
+              required: true
+              schema:
+                type: integer
+              description: テンプレートID
+            - in: header
+              name: Cookie
+              required: true
+              schema:
+                type: string
+              description: next-auth.session-token=<token>
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      description: テンプレート名
+                    description:
+                      type: string
+                      description: 説明
+                    whenType:
+                      type: integer
+                      description: when種別（0:日付, 1:曜日, 2:時刻）
+                    when:
+                      type: string
+                      description: when値
+                    placeId:
+                      type: integer
+                      description: 場所ID
+          responses:
+            '200':
+              description: テンプレート更新成功
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      activityTemplate:
+                        $ref: '#/components/schemas/ActivityTemplate'
+            '400':
+              description: バリデーションエラー
+            '404':
+              description: テンプレートが存在しない
+          tags:
+            - ActivityTemplates
+        delete:
+          summary: 活動テンプレート削除
+          description: 指定した活動テンプレートを削除
+          parameters:
+            - in: path
+              name: id
+              required: true
+              schema:
+                type: integer
+              description: テンプレートID
+            - in: header
+              name: Cookie
+              required: true
+              schema:
+                type: string
+              description: next-auth.session-token=<token>
+          responses:
+            '200':
+              description: テンプレート削除成功
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      ok:
+                        type: boolean
+            '404':
+              description: テンプレートが存在しない
+          tags:
+            - ActivityTemplates
+        ActivityTemplate:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            description:
+              type: string
+              nullable: true
+            whenType:
+              type: integer
+              description: 0:日付, 1:曜日, 2:時刻
+            when:
+              type: string
+            placeId:
+              type: integer
+              nullable: true
+            place:
+              $ref: '#/components/schemas/Place'
+              nullable: true
+    /api/groups/invite:
+      post:
+        summary: グループ招待メール送信
+        description: 指定したグループにユーザーを招待するメールを送信
+        parameters:
+          - in: header
+            name: Cookie
+            required: true
+            schema:
+              type: string
+            description: next-auth.session-token=<token>
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  groupId:
+                    type: integer
+                    description: 招待対象グループID
+                  emails:
+                    type: array
+                    items:
+                      type: string
+                      format: email
+                    description: 招待するメールアドレス配列
+                required:
+                  - groupId
+                  - emails
+        responses:
+          '200':
+            description: 招待メール送信結果
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    results:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          email:
+                            type: string
+                          status:
+                            type: string
+                            enum: [invited, already_invited, error]
+          '400':
+            description: パラメータ不正
+        tags:
+          - GroupInvites
+    /api/groups/{id}/invites:
+      get:
+        summary: グループ招待一覧取得
+        description: 指定したグループの招待中ユーザー一覧を取得
+        parameters:
+          - in: path
+            name: id
+            required: true
+            schema:
+              type: integer
+            description: グループID
+          - in: header
+            name: Cookie
+            required: true
+            schema:
+              type: string
+            description: next-auth.session-token=<token>
+        responses:
+          '200':
+            description: 招待一覧取得成功
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    invites:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Invite'
+          '404':
+            description: グループが存在しない
+        tags:
+          - GroupInvites
+      Invite:
+        type: object
+        properties:
+          id:
+            type: string
+            description: 招待トークンID
+          identifier:
+            type: string
+            description: 招待先メールアドレス
+          groupId:
+            type: integer
+          expires:
+            type: string
+            format: date-time
+  /api/groups:
+    get:
+      summary: グループ一覧取得
+      description: 登録されているグループの一覧を取得
+      parameters:
+        - in: header
+          name: Cookie
+          required: true
+          schema:
+            type: string
+          description: next-auth.session-token=<token>
+      responses:
+        '200':
+          description: グループ一覧取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  groups:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Group'
+      tags:
+        - Groups
+    post:
+      summary: グループ新規作成
+      description: 新しいグループを作成
+      parameters:
+        - in: header
+          name: Cookie
+          required: true
+          schema:
+            type: string
+          description: next-auth.session-token=<token>
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: グループ名
+                description:
+                  type: string
+                  description: 説明
+              required:
+                - name
+      responses:
+        '201':
+          description: グループ作成成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  group:
+                    $ref: '#/components/schemas/Group'
+        '400':
+          description: バリデーションエラー
+      tags:
+        - Groups
+  /api/groups/{id}:
+    get:
+      summary: グループ取得
+      description: 指定したグループを取得
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: グループID
+        - in: header
+          name: Cookie
+          required: true
+          schema:
+            type: string
+          description: next-auth.session-token=<token>
+      responses:
+        '200':
+          description: グループ取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  group:
+                    $ref: '#/components/schemas/Group'
+        '400':
+          description: パラメータ不正
+        '404':
+          description: グループが存在しない
+      tags:
+        - Groups
+    put:
+      summary: グループ更新
+      description: 指定したグループを更新
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: グループID
+        - in: header
+          name: Cookie
+          required: true
+          schema:
+            type: string
+          description: next-auth.session-token=<token>
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: グループ名
+                description:
+                  type: string
+                  description: 説明
+      responses:
+        '200':
+          description: グループ更新成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  group:
+                    $ref: '#/components/schemas/Group'
+        '400':
+          description: バリデーションエラー
+        '404':
+          description: グループが存在しない
+      tags:
+        - Groups
+    delete:
+      summary: グループ削除
+      description: 指定したグループを削除
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: グループID
+        - in: header
+          name: Cookie
+          required: true
+          schema:
+            type: string
+          description: next-auth.session-token=<token>
+      responses:
+        '200':
+          description: グループ削除成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+        '404':
+          description: グループが存在しない
+      tags:
+        - Groups
+    Group:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+
+openapi: 3.0.3
+info:
+  title: Group Member List API
+  version: '1.0.0'
+  description: |
+    本APIは「メールリンク認証」＋「独自セッション管理（next-auth.session-token）」方式です。
+    - 認証トークン名は `next-auth.session-token` ですが、next-authライブラリは使用していません。
+    - セッションはDBで管理し、クッキーでやり取りします。
+    - 認証必須APIは `Cookie: next-auth.session-token=<token>` を送信してください。
+    - 認証フロー:
+      1. /api/login でメールアドレスを送信 → 認証リンクがメール送信される
+      2. リンククリックで /api/auth/verify → セッション発行・クッキー付与
+      3. 以降はクッキーを送信して認証API利用
+    ※「next-auth.session-token」は命名互換のみで、next-authライブラリの導入・依存はありません。
+paths:
+  /api/login:
+    post:
+      summary: ログイン（認証メール送信）
+      description: ユーザーのメールアドレスを受け取り、認証メールを送信。リンク経由でセッション発行。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: ユーザーのメールアドレス
+              required:
+                - email
+      responses:
+        '200':
+          description: 認証メール送信成功
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+              description: next-auth.session-token=<token>; Path=/; HttpOnly; SameSite=Lax
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: 成功フラグ
+      tags:
+        - Auth
+  /api/logout:
+    post:
+      summary: ログアウト
+      description: セッションを削除し、クッキーをクリア
+      parameters:
+        - in: header
+          name: Cookie
+          required: true
+          schema:
+            type: string
+          description: next-auth.session-token=<token>
+      responses:
+        '200':
+          description: ログアウト成功
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+              description: next-auth.session-token=; Path=/; HttpOnly; Max-Age=0
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: 成功フラグ
+      tags:
+        - Auth
+
+
+  /api/users/{id}:
+    get:
+      summary: ユーザー取得
+      description: 指定したユーザーを取得
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ユーザーID
+        - in: header
+          name: Cookie
+          required: true
+          schema:
+            type: string
+          description: next-auth.session-token=<token>
+      responses:
+        '200':
+          description: ユーザー情報取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      email:
+                        type: string
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+        '400':
+          description: パラメータ不正
+        '404':
+          description: ユーザーが存在しない
+      tags:
+        - Users
+    put:
+      summary: ユーザー更新
+      description: 指定したユーザーを更新
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ユーザーID
+        - in: header
+          name: Cookie
+          required: true
+          schema:
+            type: string
+          description: next-auth.session-token=<token>
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: ユーザー名
+                email:
+                  type: string
+                  description: メールアドレス
+      responses:
+        '200':
+          description: ユーザー情報更新成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      email:
+                        type: string
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+        '400':
+          description: nameまたはemailが未指定
+        '404':
+          description: ユーザーが存在しない
+      tags:
+        - Users
+    delete:
+      summary: ユーザー削除
+      description: 指定したユーザーを削除
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ユーザーID
+        - in: header
+          name: Cookie
+          required: true
+          schema:
+            type: string
+          description: next-auth.session-token=<token>
+      responses:
+        '200':
+          description: ユーザー削除成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+        '404':
+          description: ユーザーが存在しない
+      tags:
+        - Users
+
+
+  /api/activities:
+    get:
+      summary: 活動一覧取得
+      description: 登録されている活動の一覧を取得
+      parameters:
+        - in: header
+          name: Cookie
+          required: true
+          schema:
+            type: string
+          description: next-auth.session-token=<token>
+        - in: query
+          name: groupId
+          required: false
+          schema:
+            type: integer
+          description: グループIDでフィルタ
+        - in: query
+          name: status
+          required: false
+          schema:
+            type: string
+            enum: [upcoming, ongoing, finished]
+          description: ステータスでフィルタ
+      responses:
+        '200':
+          description: 活動一覧取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  activities:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Activity'
+      tags:
+        - Activities
+    post:
+      summary: 活動新規作成
+      description: 新しい活動を作成
+      parameters:
+        - in: header
+          name: Cookie
+          required: true
+          schema:
+            type: string
+          description: next-auth.session-token=<token>
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 活動名
+                description:
+                  type: string
+                  description: 説明
+                startedAt:
+                  type: string
+                  format: date-time
+                  description: 開始日時
+                finishedAt:
+                  type: string
+                  format: date-time
+                  description: 終了日時
+                placeId:
+                  type: integer
+                  description: 場所ID
+                groupIds:
+                  type: array
+                  items:
+                    type: integer
+                  description: 関連グループIDの配列
+              required:
+                - name
+                - startedAt
+      responses:
+        '201':
+          description: 活動作成成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  activity:
+                    $ref: '#/components/schemas/Activity'
+        '400':
+          description: バリデーションエラー
+      tags:
+        - Activities
+  /api/activities/{id}:
+    get:
+      summary: 活動取得
+      description: 指定した活動を取得
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: 活動ID
+        - in: header
+          name: Cookie
+          required: true
+          schema:
+            type: string
+          description: next-auth.session-token=<token>
+      responses:
+        '200':
+          description: 活動取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  activity:
+                    $ref: '#/components/schemas/Activity'
+        '400':
+          description: パラメータ不正
+        '404':
+          description: 活動が存在しない
+      tags:
+        - Activities
+    put:
+      summary: 活動更新
+      description: 指定した活動を更新
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: 活動ID
+        - in: header
+          name: Cookie
+          required: true
+          schema:
+            type: string
+          description: next-auth.session-token=<token>
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 活動名
+                description:
+                  type: string
+                  description: 説明
+                startedAt:
+                  type: string
+                  format: date-time
+                  description: 開始日時
+                finishedAt:
+                  type: string
+                  format: date-time
+                  description: 終了日時
+                placeId:
+                  type: integer
+                  description: 場所ID
+                groupIds:
+                  type: array
+                  items:
+                    type: integer
+                  description: 関連グループIDの配列
+      responses:
+        '200':
+          description: 活動更新成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  activity:
+                    $ref: '#/components/schemas/Activity'
+        '400':
+          description: バリデーションエラー
+        '404':
+          description: 活動が存在しない
+      tags:
+        - Activities
+    delete:
+      summary: 活動削除
+      description: 指定した活動を削除
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: 活動ID
+        - in: header
+          name: Cookie
+          required: true
+          schema:
+            type: string
+          description: next-auth.session-token=<token>
+      responses:
+        '200':
+          description: 活動削除成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+        '404':
+          description: 活動が存在しない
+      tags:
+        - Activities
+    Activity:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        startedAt:
+          type: string
+          format: date-time
+        finishedAt:
+          type: string
+          format: date-time
+          nullable: true
+        placeId:
+          type: integer
+          nullable: true
+        place:
+          $ref: '#/components/schemas/Place'
+          nullable: true
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/Group'
+        participants:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserSummary'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    UserSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        status:
+          type: string
+          description: 参加ステータス（pending, confirmed, declined）
+
+activities_participants_list:
+  url: /api/activities/[id]/participants
+  method: GET
+  description: 指定した活動の参加者一覧を取得
+  request:
+    headers:
+      Cookie: next-auth.session-token=<token> (認証必須)
+    params:
+      id: number - 活動ID
+  response:
+    status: 200
+    body:
+      participants: array
+        - userId: number - ユーザーID
+          name: string - ユーザー名
+          email: string - メールアドレス
+          status: number - 参加ステータス（0: pending, 1: confirmed, 2: declined）
+          joinedAt: string - 参加登録日時（ISO 8601）
+  notes:
+    - Next.js API Route で処理（app/api/activities/[id]/participants/route.ts）
+    - 活動が存在しない場合は 404 を返す
+
+activities_participants_add:
+  url: /api/activities/[id]/participants
+  method: POST
+  description: 指定した活動に参加者を追加
+  request:
+    headers:
+      Content-Type: application/json
+      Cookie: next-auth.session-token=<token> (認証必須)
+    params:
+      id: number - 活動ID
+    body:
+      userId: number (required) - ユーザーID
+      status: number (optional, default: 0) - 参加ステータス
+  response:
+    status: 201
+    body:
+      participant:
+        userId: number
+        status: number
+        joinedAt: string
+  notes:
+    - Next.js API Route で処理（app/api/activities/[id]/participants/route.ts）
+    - 重複追加時は 409 を返す
+    - バリデーションエラー時は 400 を返す
+
+activities_participants_update:
+  url: /api/activities/[id]/participants/[userId]
+  method: PUT
+  description: 指定した活動の参加者ステータスを更新
+  request:
+    headers:
+      Content-Type: application/json
+      Cookie: next-auth.session-token=<token> (認証必須)
+    params:
+      id: number - 活動ID
+      userId: number - ユーザーID
+    body:
+      status: number (required) - 参加ステータス
+  response:
+    status: 200
+    body:
+      participant:
+        userId: number
+        status: number
+        updatedAt: string
+  notes:
+    - Next.js API Route で処理（app/api/activities/[id]/participants/[userId]/route.ts）
+    - 参加者が存在しない場合は 404 を返す
+
+activities_participants_remove:
+  url: /api/activities/[id]/participants/[userId]
+  method: DELETE
+  description: 指定した活動から参加者を削除
+  request:
+    headers:
+      Cookie: next-auth.session-token=<token> (認証必須)
+    params:
+      id: number - 活動ID
+      userId: number - ユーザーID
+  response:
+    status: 200
+    body:
+      ok: boolean - 成功フラグ
+  notes:
+    - Next.js API Route で処理（app/api/activities/[id]/participants/[userId]/route.ts）
+    - 参加者が存在しない場合でも 200 を返す
+
+
+  /api/places:
+    get:
+      summary: 場所一覧取得
+      description: 登録されている場所の一覧を取得
+      parameters:
+        - in: header
+          name: Cookie
+          required: true
+          schema:
+            type: string
+          description: next-auth.session-token=<token>
+      responses:
+        '200':
+          description: 場所一覧取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  places:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Place'
+      tags:
+        - Places
+    post:
+      summary: 場所新規作成
+      description: 新しい場所を作成
+      parameters:
+        - in: header
+          name: Cookie
+          required: true
+          schema:
+            type: string
+          description: next-auth.session-token=<token>
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 場所名
+                latitude:
+                  type: number
+                  description: 緯度（-90 ~ 90）
+                longitude:
+                  type: number
+                  description: 経度（-180 ~ 180）
+              required:
+                - name
+      responses:
+        '201':
+          description: 場所作成成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  place:
+                    $ref: '#/components/schemas/Place'
+        '400':
+          description: バリデーションエラー
+      tags:
+        - Places
+  /api/places/{id}:
+    get:
+      summary: 場所取得
+      description: 指定した場所を取得
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: 場所ID
+        - in: header
+          name: Cookie
+          required: true
+          schema:
+            type: string
+          description: next-auth.session-token=<token>
+      responses:
+        '200':
+          description: 場所取得成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  place:
+                    $ref: '#/components/schemas/Place'
+        '400':
+          description: パラメータ不正
+        '404':
+          description: 場所が存在しない
+      tags:
+        - Places
+    put:
+      summary: 場所更新
+      description: 指定した場所を更新
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: 場所ID
+        - in: header
+          name: Cookie
+          required: true
+          schema:
+            type: string
+          description: next-auth.session-token=<token>
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: 場所名
+                latitude:
+                  type: number
+                  description: 緯度（-90 ~ 90）
+                longitude:
+                  type: number
+                  description: 経度（-180 ~ 180）
+      responses:
+        '200':
+          description: 場所更新成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  place:
+                    $ref: '#/components/schemas/Place'
+        '400':
+          description: バリデーションエラー
+        '404':
+          description: 場所が存在しない
+      tags:
+        - Places
+    delete:
+      summary: 場所削除
+      description: 指定した場所を削除
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: 場所ID
+        - in: header
+          name: Cookie
+          required: true
+          schema:
+            type: string
+          description: next-auth.session-token=<token>
+      responses:
+        '200':
+          description: 場所削除成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+        '404':
+          description: 場所が存在しない
+      tags:
+        - Places
+
+components:
+  schemas:
+    Place:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        latitude:
+          type: number
+          nullable: true
+        longitude:
+          type: number
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
