@@ -16,11 +16,11 @@ interface Place {
   longitude: number | null
 }
 
-export default function NewActivityForm() {
+export default function NewActivityForm({ initialDate }: { initialDate?: string }) {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    startedAt: '',
+    startedAt: initialDate ?? '',
     finishedAt: '',
     placeId: '',
     groupIds: [] as number[]
