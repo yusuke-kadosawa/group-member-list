@@ -26,7 +26,7 @@ export default async function CalendarWeekPage({
   const session = await requireAuth();
   const initialDate = isoWeekToDate(parseInt(year), parseInt(week));
   return (
-    <Layout session={session} headerTitle="週カレンダー">
+    <Layout session={session} headerTitle="活動カレンダー">
       <CalendarViewSwitcher currentView="week" />
       <CalendarWeekView initialDate={initialDate} />
     </Layout>
