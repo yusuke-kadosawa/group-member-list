@@ -5,14 +5,14 @@ import NewActivityForm from "./NewActivityForm"
 export default async function NewActivityPage({
   searchParams,
 }: {
-  searchParams: Promise<{ date?: string }>
+  searchParams: Promise<{ date?: string; end?: string }>
 }) {
   const session = await requireAuth()
-  const { date } = await searchParams
+  const { date, end } = await searchParams
 
   return (
     <Layout session={session} headerTitle="新規活動作成">
-      <NewActivityForm initialDate={date} />
+      <NewActivityForm initialDate={date} initialEnd={end} />
     </Layout>
   )
 }

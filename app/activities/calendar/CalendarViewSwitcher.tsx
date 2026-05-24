@@ -1,6 +1,8 @@
+'use client';
+import { useEffect } from "react";
 import Link from "next/link";
 
-type CalendarView = "day" | "week" | "month";
+type CalendarView = "day" | "week" | "month" | null;
 
 interface Props {
   currentView: CalendarView;
@@ -18,6 +20,12 @@ function getISOWeek(date: Date): { year: number; week: number } {
 }
 
 export default function CalendarViewSwitcher({ currentView }: Props) {
+  useEffect(() => {
+    if (currentView) {
+      localStorage.setItem('calendarView', currentView);
+    }
+  }, [currentView]);
+
   const today = new Date();
   const y = today.getFullYear();
   const m = today.getMonth() + 1;
@@ -25,25 +33,17 @@ export default function CalendarViewSwitcher({ currentView }: Props) {
   const { year: wy, week: w } = getISOWeek(today);
 
   const base =
-    "px-3 py-1 rounded font-bold border shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors";
+    "px-3 py-1 rounded font-bold border shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors text-sm";
 
-  const dayClass =
-    currentView === "day"
-      ? `${base} bg-blue-600 text-white border-blue-600 focus:ring-blue-400`
-      : `${base} bg-white text-blue-700 border-blue-600 hover:bg-blue-600 hover:text-white focus:ring-blue-400`;
+  const activeClass = `${base} bg-blue-600 text-white border-blue-600 focus:ring-blue-400`;
+  const inactiveClass = `${base} bg-white dark:bg-gray-800 text-blue-700 dark:text-blue-400 border-blue-600 hover:bg-blue-600 hover:text-white focus:ring-blue-400`;
 
-  const weekClass =
-    currentView === "week"
-      ? `${base} bg-green-600 text-white border-green-600 focus:ring-green-400`
-      : `${base} bg-white text-green-700 border-green-600 hover:bg-green-600 hover:text-white focus:ring-green-400`;
-
-  const monthClass =
-    currentView === "month"
-      ? `${base} bg-purple-600 text-white border-purple-600 focus:ring-purple-400`
-      : `${base} bg-white text-purple-700 border-purple-600 hover:bg-purple-600 hover:text-white focus:ring-purple-400`;
+  const dayClass   = currentView === "day"   ? activeClass : inactiveClass;
+  const weekClass  = currentView === "week"  ? activeClass : inactiveClass;
+  const monthClass = currentView === "month" ? activeClass : inactiveClass;
 
   return (
-    <div className="flex gap-2 justify-end mb-4">
+    <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1 mb-4 w-fit ml-auto">
       <Link
         href={`/activities/calendar/day/${y}/${m}/${d}`}
         className={dayClass}

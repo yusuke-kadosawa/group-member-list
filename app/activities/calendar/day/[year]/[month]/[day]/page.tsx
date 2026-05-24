@@ -12,7 +12,7 @@ export default async function CalendarDayPage({
   const session = await requireAuth();
   const initialDate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
   return (
-    <Layout session={session} headerTitle="日カレンダー">
+    <Layout session={session} headerTitle="活動カレンダー">
       <CalendarViewSwitcher currentView="day" />
       <CalendarDayView initialDate={initialDate} />
     </Layout>
