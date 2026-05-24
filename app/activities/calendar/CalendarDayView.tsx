@@ -101,6 +101,7 @@ export default function CalendarDayView({ initialDate }: Props) {
         );
       }}
       slotLaneContent={(arg) => {
+        if (arg.time == null) return null;
         const totalMs = arg.time.milliseconds;
         const h = String(Math.floor(totalMs / 3600000)).padStart(2, '0');
         const m = String(Math.floor((totalMs % 3600000) / 60000)).padStart(2, '0');
