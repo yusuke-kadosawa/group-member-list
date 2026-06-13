@@ -27,7 +27,6 @@ describe('/api/groups/invite/accept API', () => {
     const group = await prisma.group.create({
       data: {
         name: 'テスト招待受諾グループ',
-        groupUsers: { create: [{ userId: user.id, role: 3 }] },
       },
     });
     testGroupId = group.id;
