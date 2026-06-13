@@ -172,7 +172,7 @@ export async function PUT(req, { params }) {
 
 // @ts-expect-error Next.js 15 API Route signature
 export async function DELETE(_req, { params }) {
-  const { id } = params
+  const { id } = await params
   const start = Date.now()
   try {
     const session = await getServerSession()
