@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { MESSAGES } from "@/constants/messages";
 
 export default function CheckEmail() {
@@ -27,12 +28,12 @@ export default function CheckEmail() {
             </button>
           </form>
 
-          <a
+          <Link
             href="/"
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
           >
             {MESSAGES.AUTH_TOP_PAGE}
-          </a>
+          </Link>
         </div>
       </div>
     </div>

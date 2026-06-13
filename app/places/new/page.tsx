@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import { requireAuth } from "@/lib/auth"
 import Link from "next/link"
 import PlaceForm from "@/components/PlaceForm"

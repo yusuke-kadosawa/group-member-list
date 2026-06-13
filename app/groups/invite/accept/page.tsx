@@ -1,8 +1,16 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function GroupInviteAcceptPage() {
+  return (
+    <Suspense fallback={<div>招待リンクを確認中...</div>}>
+      <GroupInviteAcceptContent />
+    </Suspense>
+  );
+}
+
+function GroupInviteAcceptContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
