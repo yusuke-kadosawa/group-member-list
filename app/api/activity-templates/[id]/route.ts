@@ -35,7 +35,7 @@ function validateWhen(whenType: number, when: string): string | null {
 
 // @ts-expect-error Next.js 15 API Route signature
 export async function GET(_req, { params }) {
-  const { id } = params
+  const { id } = await params
   const start = Date.now()
   try {
     const session = await getServerSession()
@@ -71,7 +71,7 @@ export async function GET(_req, { params }) {
 
 // @ts-expect-error Next.js 15 API Route signature
 export async function PUT(req, { params }) {
-  const { id } = params
+  const { id } = await params
   const start = Date.now()
   try {
     const session = await getServerSession()
