@@ -64,11 +64,21 @@ describe('/api/groups/invite/accept API', () => {
   });
 
   it('同じトークンで2回目は409（already joined）', async () => {
-    // 1回目で消費済み
+    // 参加済みユーザー向けの新しい招待トークンでも409になることを検証
+    const secondInviteToken = randomUUID();
+    await prisma.verificationToken.create({
+      data: {
+        identifier: TEST_USER.email,
+        token: secondInviteToken,
+        expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        groupId: testGroupId,
+      },
+    });
+
     const res = await api
       .post('/api/groups/invite/accept')
       .set('Cookie', authCookie)
-      .send({ token: inviteToken });
+      .send({ token: secondInviteToken });
     expect(res.status).toBe(409);
     expect(res.body.error).toBe('already joined');
   });
