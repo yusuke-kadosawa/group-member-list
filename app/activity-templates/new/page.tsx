@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import { requireAuth } from '@/lib/auth'
 import Link from 'next/link'
 import Layout from '@/components/Layout'

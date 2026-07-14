@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic"
+
 import { requireAuth } from "@/lib/auth"
 import Layout from "@/components/Layout"
 import NewActivityForm from "./NewActivityForm"
